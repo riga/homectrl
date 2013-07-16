@@ -1,6 +1,6 @@
 {
     "server": {
-        "base": "/homectrl/"
+        "base": "/homectrl/",
         "host": "localhost",
         "port": 8080
     },

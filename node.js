@@ -87,6 +87,5 @@ var Server = Class.extend({
 
 });
 
-console.log(__dirname);
-//var server = Server();
-//server.start();
+var server = new Server(__dirname);
+server.start();
