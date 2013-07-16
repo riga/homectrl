@@ -1,0 +1,26 @@
+{
+    "server": {
+        "base": "/homectrl/"
+        "host": "localhost",
+        "port": 8080
+    },
+
+    "logging": {
+        "levels": {
+            "all"    : 0,
+            "debug"  : 2,
+            "info"   : 4,
+            "warning": 6,
+            "error"  : 8,
+            "fatal"  : 10
+        },
+        "colors": {
+            "all"    : "grey",
+            "debug"  : "blue",
+            "info"   : "green",
+            "warning": "yellow",
+            "error"  : "red",
+            "fatal"  : "red"
+        }
+    }
+}

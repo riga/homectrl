@@ -21,7 +21,10 @@
     "dependencies" : {
         "express": "3.3.4",
         "socket.io": "0.9.16",
-        "node-controller": "0.0.2"
+        "node-controller": "0.0.2",
+        "winston": "0.7.2",
+        "nconf": "0.6.7",
+        "jade": "0.33.0"
     },
     "license": "GPL",
     "engines": {
