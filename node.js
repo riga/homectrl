@@ -63,7 +63,7 @@ var Server = Class.extend({
         // cookie parser
         this.app.use(express.cookieParser());
         // static content
-        this.app.use(path.join(this.config.get("server:base"), "public"), express.static(this.paths.public));
+        this.app.use(path.join(this.config.get("server:base"), "static"), express.static(this.paths.public));
         // root controller
         this.app.use(this.root.middleware(this.config.get("server:base") || "/"));
 
