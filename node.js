@@ -54,9 +54,6 @@ var Server = Class.extend({
         this.logger.info("Start Root controller");
         this.root = new RootController(this);
 
-        // start the plugin handler
-        this.pluginHandler = new PluginHandler(this);
-
         // use middleware
         this.logger.info("Start middlewares");
         // access logger
@@ -67,8 +64,17 @@ var Server = Class.extend({
         this.app.use(express.bodyParser());
         // cookie parser
         this.app.use(express.cookieParser());
+        // simple sessions
+        this.app.use(express.session({secret: String(Math.random() * 1000000)}));
         // static content
         this.app.use(path.join(this.config.get("server:base"), "static"), express.static(this.paths.public));
+        // authentification
+        this.app.use(this.config.get("server:base"), this.auth.bind(this));
+        this.authExceptions = ["login", "static"];
+
+        // start the plugin handler
+        this.pluginHandler = new PluginHandler(this);
+
         // root controller
         this.app.use(this.root.middleware(this.config.get("server:base") || "/"));
 
@@ -89,6 +95,26 @@ var Server = Class.extend({
         this.logger.log("info", "Shutdown due to signal: %s", signal);
         process.exit(0);
         return this;
+    },
+
+    auth: function(req, res, next) {
+        var self = this;
+        if (!req.session.auth) {
+            // check exceptions
+            var hit = false;
+            this.authExceptions.forEach(function(ex) {
+                if (hit)
+                    return;
+                var re = new RegExp("^" + self.config.get("server:base") + ex);
+                if (re.test(req.originalUrl))
+                    hit = true;
+            });
+            if (!hit) {
+                res.redirect(this.config.get("server:base") + "login");
+                return;
+            }
+        }
+        next();
     }
 
 });

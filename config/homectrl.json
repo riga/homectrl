@@ -5,6 +5,11 @@
         "port": 8080
     },
 
+    "user": {
+        "name": "marcel",
+        "pass": "123456"
+    },
+
     "logging": {
         "levels": {
             "all"    : 0,

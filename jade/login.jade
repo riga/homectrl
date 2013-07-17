@@ -1,0 +1,101 @@
+extends bootstrap
+
+block title
+    | HomeCtrl - Login
+
+block cssInline
+    style.
+        body {
+            padding-top: 20px;
+            padding-bottom: 40px;
+        }
+
+        .container-narrow {
+            margin: 0 auto;
+            max-width: 700px;
+        }
+
+        .container-narrow > hr {
+            margin: 30px 0;
+        }
+
+        .form-signin {
+            max-width: 300px;
+            padding: 19px 29px 29px;
+            margin: 0 auto 20px;
+            background-color: #fff;
+            border: 1px solid #e5e5e5;
+            -webkit-border-radius: 5px;
+               -moz-border-radius: 5px;
+                    border-radius: 5px;
+            -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+               -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                    box-shadow: 0 1px 2px rgba(0,0,0,.05);
+        }
+
+        .form-signin .form-signin-heading,
+        .form-signin .checkbox {
+            margin-bottom: 10px;
+        }
+
+        .form-signin input[type="text"],
+        .form-signin input[type="password"] {
+            font-size: 16px;
+            height: auto;
+            margin-bottom: 15px;
+            padding: 7px 9px;
+        }
+
+block jsInline
+    script.
+        $(function() {
+            var base = "#{base}";
+
+            $("#login").focus();
+
+            $(".form-signin").submit(function() {
+                var login = $("#login").val().toLowerCase(), pass = $("#pass").val();
+                if (!login || !pass)
+                    return false;
+                $.post(base + "loginajax", {login: login, pass: pass}, function(response) {
+                    if (response.success) {
+                        window.setTimeout(function() {
+                            window.location.href = base;
+                        }, 1000);
+                        $("#alert-fail").hide();
+                        $("#alert-success").show();
+                    } else
+                        $("#alert-fail").show();
+                })
+                return false;
+            });
+        });
+
+block content
+    .container-narrow
+        .masthead
+            ul.nav.nav-pills.pull-right
+                li.active
+                    a(href="https://github.com/riga/homectrl", target="_blanc") Project on Github
+                li
+                    a(href="https://github.com/riga", target="_blanc") Contact
+            h3.muted HomeCtrl
+
+            hr
+
+            .container-narrow
+                form.form-signin
+                    h2.form-signin-heading Please sign in
+                    input.input-block-level#login(type="text", placeholder="Username or Email address")
+                    input.input-block-level#pass(type="password", placeholder="Password")
+                    button.btn.btn-large.btn-primary(type="submit") Sign in
+
+                #alert-success.alert.alert-success(style="display:none;")
+                    button.close(type="button", data-dismiss="alert") &times;
+                    strong Success!
+                    |  You will be redirected in 1 second.
+
+                #alert-fail.alert.alert-error(style="display:none;")
+                    button.close(type="button", data-dismiss="alert") &times;
+                    strong Error!
+                    |  Your login failed.
