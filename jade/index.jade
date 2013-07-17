@@ -1,0 +1,28 @@
+extends bootstrap
+
+block title
+    | Index
+
+block append jsImports
+    - each jsFile in jsFiles || []
+        script(src=base + jsFile)
+
+block append cssImports
+    - each cssFile in cssFiles || []
+        link(href=base + cssFile, rel='stylesheet', media='screen')
+
+block cssInline
+    style.
+        .test {
+            padding: 30px 10px;
+        }
+
+block jsInline
+    script.
+        var base = '#{base}';
+        $(function() {
+            // code
+        });
+
+block content
+    h1 Hello!
