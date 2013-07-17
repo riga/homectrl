@@ -5,8 +5,10 @@ var express    = require("express"),
     fs         = require("fs"),
     jade       = require("jade");
 
-var Class = require("./lib/class"),
-    Root  = require("./lib/root");
+var RootController  = require("./lib/root"),
+    PluginHandler   = require("./lib/plugin").handler;
+
+var Class = require("./lib/class");
 
 var Server = Class.extend({
     init: function(base, conf) {
@@ -50,7 +52,10 @@ var Server = Class.extend({
 
         // start the root controller
         this.logger.info("Start Root controller");
-        this.root = new Root(this);
+        this.root = new RootController(this);
+
+        // start the plugin handler
+        this.pluginHandler = new PluginHandler(this);
 
         // use middleware
         this.logger.info("Start middlewares");
