@@ -25,4 +25,27 @@ block jsInline
         });
 
 block content
-    h1 Hello!
+    .navbar.navbar-fixed-top.navbar-inverse
+        .navbar-inner
+            .container
+
+                a.btn.btn-navbar(data-toggle="collapse", data-target=".nav-collapse")
+                    span.icon-bar
+                    span.icon-bar
+                    span.icon-bar
+
+                a.brand(href="#") HomeCtrl
+
+                .nav-collapse.collapse
+                    ul.nav
+                        li.active
+                            a Foo
+                        li.divider-vertical
+                        li
+                            a Bar
+                        li.divider-vertical
+                        li
+                            a Test
+
+                    a.btn.btn-primary.pull-right(href=base+"logout") Logout 
+                        i.icon-off.icon-white
