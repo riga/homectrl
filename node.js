@@ -73,10 +73,10 @@ var Server = Class.extend({
     },
 
     start: function() {
-        var host = this.config.get("server:host");
-        var port = this.config.get("server:port");
-        this.logger.log("info", "Start the server at %s:%s", host, port);
-        // TODO
+        var cfg = this.config.get("server");
+        this.logger.log("info", "Start the server at %s:%s%s", cfg.host, cfg.port, cfg.base);
+        this.app.listen(cfg.port, cfg.host);
+        return this;
     },
 
     exit: function(signal) {
