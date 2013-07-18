@@ -1,5 +1,9 @@
 var HomeCtrl = Class.extend({
     init: function() {
+        this.workflow = {
+            activePlugin: null
+        };
+
         this.plugins = {};
         this.setupTopics();
 
@@ -20,9 +24,13 @@ var HomeCtrl = Class.extend({
             nav.append("<li class='divider-vertical'></li>");
 
         // add a link
-        var link = $("#navlist")
+        var $link = $("#navlist")
             .append("<li><a href='#" + plugin.name + "'>" + plugin.label + "</a></li>")
             .children().last().children().first();
+
+        // store data inside the plugin
+        plugin._$link = $link;
+        plugin._hash = "#" + plugin.name;
 
         return this;
     },
@@ -35,7 +43,16 @@ var HomeCtrl = Class.extend({
     },
 
     switchPlugin: function(name) {
-        console.log("switch to", name);
+        var plugin = this.plugins[name];
+        if (!plugin)
+            return this;
+
+        // toggle activity
+        if (this.workflow.activePlugin)
+            this.workflow.activePlugin._$link.parent().toggleClass("active", false);
+        plugin._$link.parent().toggleClass("active", true);
+        this.workflow.activePlugin = plugin;
+
         return this;
     },
 
