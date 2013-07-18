@@ -10,14 +10,14 @@ var Plugin = Class.extend({
     }
 });
 
-var TestPlugin = Plugin.extend({
+var FooBarPlugin = Plugin.extend({
     init: function() {
         this._super();
 
-        this.name = "test";
-        this.label = "Test";
+        this.name = "foobar";
+        this.label = "FooBar";
     }
 
 });
 
-$.Topic("plugin.register").publish(new TestPlugin());
+$.Topic("plugin.register").publish(new FooBarPlugin());
