@@ -4,12 +4,15 @@ block title
     | HomeCtrl
 
 block append jsImports
+    script(src=base+"static/js/class.js")
+    script(src=base+"static/js/jquery.topics.min.js")
+    script(src=base+"static/js/homectrl.js")
     - each jsFile in jsFiles || []
-        script(src=base + jsFile)
+        script(src=base+jsFile)
 
 block append cssImports
     - each cssFile in cssFiles || []
-        link(href=base + cssFile, rel='stylesheet', media='screen')
+        link(href=base+cssFile, rel="stylesheet", media="screen")
 
 block cssInline
     style.
@@ -19,9 +22,13 @@ block cssInline
 
 block jsInline
     script.
-        var base = '#{base}';
+        var base = "#{base}";
         $(function() {
-            // code
+            if (!window.location.hash) {
+                var link = $("#navlist").children().first().children().first();
+                if (link)
+                    window.location.hash = link.attr("href");
+            }
         });
 
 block content
@@ -37,15 +44,7 @@ block content
                 a.brand(href="#") HomeCtrl
 
                 .nav-collapse.collapse
-                    ul.nav
-                        li.active
-                            a Foo
-                        li.divider-vertical
-                        li
-                            a Bar
-                        li.divider-vertical
-                        li
-                            a Test
+                    ul.nav#navlist
 
                     a.btn.btn-primary.pull-right(href=base+"logout") Logout 
                         i.icon-off.icon-white
