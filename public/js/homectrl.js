@@ -7,6 +7,8 @@ var HomeCtrl = Class.extend({
         this.plugins = {};
         this.setupTopics();
 
+        this.socket = io.connect("http://localhost:8081");
+
         // register the onpopstate callback
         window.onpopstate = this.onHashChange.bind(this);
     },
@@ -68,6 +70,10 @@ var HomeCtrl = Class.extend({
     setupTopics: function() {
         $.Topic("plugin.register").subscribe(this.registerPlugin.bind(this));
         return this;
+    },
+
+    socketId: function() {
+        return this.socket.socket.sessionid;
     }
 });
 

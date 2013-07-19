@@ -6,7 +6,8 @@ var express    = require("express"),
     jade       = require("jade");
 
 var RootController  = require("./lib/root"),
-    PluginHandler   = require("./lib/plugin").handler;
+    PluginHandler   = require("./lib/plugin").handler,
+    SocketHandler   = require("./lib/socket");
 
 var Class = require("./lib/class");
 
@@ -33,7 +34,7 @@ var Server = Class.extend({
             colors: logConfig.colors,
             transports: [
                 new winston.transports.Console({
-                    level: "debug",
+                    level: logConfig.level,
                     colorize: true
                 })
             ]
@@ -43,6 +44,9 @@ var Server = Class.extend({
         // start express app
         this.logger.info("Start the express app");
         this.app = express();
+
+        // start the socket handler
+        this.socketHandler = new SocketHandler(this);
 
         // load jade templating
         this.logger.info("Start jade templating");

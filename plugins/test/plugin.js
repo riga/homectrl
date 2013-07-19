@@ -1,8 +1,6 @@
-var Controller = require("node-controller");
-
-var PluginController = Controller.extend({
-    init: function(parent) {
-        this._super(parent);
+module.exports = Plugin.extend({
+    init: function() {
+        this._super.apply(this, arguments);
     },
 
     files: function() {
@@ -17,6 +15,3 @@ var PluginController = Controller.extend({
     }
 
 });
-
-
-module.exports = PluginController;

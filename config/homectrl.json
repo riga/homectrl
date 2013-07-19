@@ -5,12 +5,17 @@
         "port": 8080
     },
 
+    "websocket": {
+        "port": 8081
+    },
+
     "user": {
         "name": "marcel",
         "pass": "123456"
     },
 
     "logging": {
+        "level": "info",
         "levels": {
             "all"    : 0,
             "debug"  : 2,
