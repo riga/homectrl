@@ -28,9 +28,15 @@ var HomeCtrl = Class.extend({
             .append("<li><a href='#" + plugin.name + "'>" + plugin.label + "</a></li>")
             .children().last().children().first();
 
+        // setup the content
+        var content = plugin.content();
+        var wrapper = $("<div>").addClass("content-wrapper").append(content).appendTo("#content");
+
         // store data inside the plugin
         plugin._$link = $link;
         plugin._hash = "#" + plugin.name;
+        plugin._content = content;
+        plugin._wrapper = wrapper;
 
         return this;
     },
@@ -47,10 +53,13 @@ var HomeCtrl = Class.extend({
         if (!plugin)
             return this;
 
-        // toggle activity
-        if (this.workflow.activePlugin)
+        // toggle view and activity
+        if (this.workflow.activePlugin) {
             this.workflow.activePlugin._$link.parent().toggleClass("active", false);
+            this.workflow.activePlugin._wrapper.hide();
+        }
         plugin._$link.parent().toggleClass("active", true);
+        plugin._wrapper.show();
         this.workflow.activePlugin = plugin;
 
         return this;

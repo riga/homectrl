@@ -16,6 +16,10 @@ var TestPlugin = Plugin.extend({
 
         this.name = "test";
         this.label = "Test";
+    },
+
+    content: function() {
+        return "test plugin";
     }
 
 });

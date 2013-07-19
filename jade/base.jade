@@ -1,17 +1,19 @@
 doctype 5
-html(lang='en')
+html(lang="en")
     block head
         block meta
-            meta(charset='utf-8')
+            meta(charset="utf-8")
 
         title
             block title
 
-        link(rel='shortcut icon', type='image/x-icon', href=base+'static/img/pencil.ico')
+        link(rel="shortcut icon", type="image/x-icon", href=base+"static/img/pencil.ico")
 
-        block cssImports
+        block cssImportsPre
 
         block cssInline
+
+        block cssImportsPost
 
         noscript
             block noScript
@@ -19,6 +21,8 @@ html(lang='en')
     block body
         block content
 
-        block jsImports
+        block jsImportsPre
 
         block jsInline
+
+        block jsImportsPost

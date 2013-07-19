@@ -16,6 +16,10 @@ var FooBarPlugin = Plugin.extend({
 
         this.name = "foobar";
         this.label = "FooBar";
+    },
+
+    content: function() {
+        return "Foo extension";
     }
 
 });
