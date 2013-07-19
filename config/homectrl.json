@@ -10,7 +10,7 @@
     },
 
     "user": {
-        "auth": true,
+        "auth": false,
         "name": "marcel",
         "pass": "123456"
     },
