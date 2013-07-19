@@ -31,13 +31,12 @@ var HomeCtrl = Class.extend({
             .children().last().children().first();
 
         // setup the content
-        var content = plugin.content();
-        var wrapper = $("<div>").addClass("content-wrapper").append(content).appendTo("#content");
+        var wrapper = $("<div>").addClass("content-wrapper").appendTo("#content");
+        plugin.setContent(wrapper);
 
         // store data inside the plugin
         plugin._$link = $link;
         plugin._hash = "#" + plugin.name;
-        plugin._content = content;
         plugin._wrapper = wrapper;
 
         return this;
@@ -74,6 +73,10 @@ var HomeCtrl = Class.extend({
 
     socketId: function() {
         return this.socket.socket.sessionid;
+    },
+
+    url: function(url) {
+        return base + url;
     }
 });
 

@@ -19,7 +19,7 @@ var Server = Class.extend({
         this.paths = {
             config: path.join(base, "config"),
             plugins: path.join(base, "plugins"),
-            views: path.join(base, "jade"),
+            views: path.join(base, "views"),
             public: path.join(base, "public")
         };
 
@@ -73,8 +73,9 @@ var Server = Class.extend({
         // static content
         this.app.use(path.join(this.config.get("server:base"), "static"), express.static(this.paths.public));
         // authentification
-        this.app.use(this.config.get("server:base"), this.auth.bind(this));
         this.authExceptions = ["login", "static"];
+        if (this.config.get("user:auth"))
+            this.app.use(this.config.get("server:base"), this.auth.bind(this));
 
         // start the plugin handler
         this.pluginHandler = new PluginHandler(this);

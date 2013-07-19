@@ -3,11 +3,12 @@ extends bootstrap
 block title
     | HomeCtrl
 
-block append jsImportsPre
+block append jsImportsPost
     script(src=base+"static/js/class.js")
     script(src=base+"static/js/socket.io.min.js")
     script(src=base+"static/js/jquery.topics.min.js")
     script(src=base+"static/js/homectrl.js")
+    script(src=base+"static/js/plugin.js")
     - each jsFile in jsFiles || []
         script(src=base+jsFile)
 
@@ -37,7 +38,7 @@ block cssInline
 
 block jsInline
     script.
-        var base = "#{base}";
+        var base = window.base = "#{base}";
         $(function() {
             if (!window.location.hash) {
                 var link = $("#navlist").children().first().children().first();
