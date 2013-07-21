@@ -21,7 +21,7 @@ var PinHandler = Class.extend({
         return this;
     },
 
-    defineInput: function(pin, interval, callback) {
+    defineInput: function(pin, callback) {
         if (callback === undefined && interval instanceof Function) {
             callback = interval;
             interval = 100;
@@ -29,7 +29,6 @@ var PinHandler = Class.extend({
         this.unexport(pin);
         this._pins[pin] = gpio.export(pin, {
             direction: "in",
-            interval: interval,
             ready: callback || function(){}
         });
         return this;
@@ -38,6 +37,7 @@ var PinHandler = Class.extend({
     set: function(pin, value, callback) {
         if (!this._pins[pin])
             return this;
+        value = value == "1" || value == "true" ? 1 : 0;
         this._pins[pin].set(value, callback || function(){});
         return this;
     },
@@ -47,10 +47,11 @@ var PinHandler = Class.extend({
 
         if (!this._pins[pin])
             return this;
+
         var send = function(value) {
             var socket = self.plugin.socket(socketId);
             if (socket)
-                socket.emit("read", {pin: pin, value: value});
+                socket.emit("gpio.input", {pin: pin, value: value ? "High" : "Low"});
         };
         this._pins[pin].on("change", send);
         if (callback)
@@ -58,7 +59,7 @@ var PinHandler = Class.extend({
         return this;
     },
 
-    purge: function(pin, callback) {
+    unlisten: function(pin, callback) {
         if (!this._pins[pin])
             return this;
         this._pins[pin].removeAllListeners("change");

@@ -7,7 +7,7 @@ var HomeCtrl = Class.extend({
         this.plugins = {};
         this.setupTopics();
 
-        this.socket = io.connect("http://localhost:8081");
+        this.websocket = io.connect("http://" + wsHost + ":" + wsPort);
 
         // register the onpopstate callback
         window.onpopstate = this.onHashChange.bind(this);
@@ -72,7 +72,7 @@ var HomeCtrl = Class.extend({
     },
 
     socketId: function() {
-        return this.socket.socket.sessionid;
+        return this.websocket.socket.sessionid;
     },
 
     url: function(url) {

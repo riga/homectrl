@@ -31,7 +31,7 @@ module.exports = Plugin.extend({
     },
 
     _defineinput_: function(req, res) {
-        this.pins.defineInput(req.body.pin, req.body.interval, function() {
+        this.pins.defineInput(req.body.pin, function() {
             res.send({success: true});
         });
     },
@@ -48,8 +48,8 @@ module.exports = Plugin.extend({
         });
     },
 
-    _purge_: function() {
-        this.pins.purge(req.body.pin, function() {
+    _unlisten_: function(req, res) {
+        this.pins.unlisten(req.body.pin, function() {
             res.send({success: true});
         });
     }

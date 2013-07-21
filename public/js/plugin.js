@@ -13,8 +13,12 @@ var Plugin = Class.extend({
         return hc.url("plugins/" + this.name + "/" + url);
     },
 
-    getTemplate: function(tmpl, callback) {
-        $.post(this.url("template"), {tmpl: tmpl}, callback);
+    getTemplate: function(tmpl, data, callback) {
+        if (callback === undefined && data instanceof Function) {
+            callback = data;
+            data = null;
+        }
+        $.post(this.url("template"), $.extend({tmpl: tmpl}, data), callback);
         return this;
     }
 });

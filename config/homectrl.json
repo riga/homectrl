@@ -6,6 +6,7 @@
     },
 
     "websocket": {
+        "host": "rpi1.local",
         "port": 8081
     },
 

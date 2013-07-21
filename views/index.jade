@@ -9,10 +9,15 @@ block append jsImportsPost
     script(src=base+"static/js/jquery.topics.min.js")
     script(src=base+"static/js/homectrl.js")
     script(src=base+"static/js/plugin.js")
+
+    script(src=base+"static/assets/bootstrap/external/bootstrap-switch.min.js")
+
     - each jsFile in jsFiles || []
         script(src=base+jsFile)
 
 block append cssImportsPre
+    link(href=base+"static/assets/bootstrap/external/bootstrap-switch.min.css", rel="stylesheet", media="screen")
+
     - each cssFile in cssFiles || []
         link(href=base+cssFile, rel="stylesheet", media="screen")
 
@@ -20,7 +25,7 @@ block cssInline
     style.
         body {
             background-image: url(#{base}static/img/hclogo.png);
-            background-position: center;
+            background-position: center top;
             padding-top: 60px;
             padding-bottom: 30px;
         }
@@ -38,7 +43,9 @@ block cssInline
 
 block jsInline
     script.
-        var base = window.base = "#{base}";
+        var base = "#{base}";
+        var wsHost = "#{wsHost}";
+        var wsPort = "#{wsPort}";
         $(function() {
             if (!window.location.hash) {
                 var link = $("#navlist").children().first().children().first();
