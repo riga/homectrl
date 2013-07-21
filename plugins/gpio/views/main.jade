@@ -1,1 +1,37 @@
-h3 GPIO pin control
+style.
+    .collection {
+        margin-top: 10px;
+    }
+
+h3 GPIO Control
+
+- outputPins = [1, 2, 3]
+- inputPins = [4, 5, 6]
+
+.row-fluid
+    .span6.text-center
+        .btn-group.text-left
+            button.btn.dropdown-toggle(data-toggle="dropdown") Outputs 
+                span.caret
+            ul.dropdown-menu
+                - for i in outputPins
+                    li
+                        a(tabindex="-1", pin="#{i}", direction="out") Pin #{i}
+                li.divider
+                li
+                    a(tabindex="-1") All
+        .well.collection#output-collection
+            i empty
+    .span6.text-center
+        .btn-group.text-left
+            button.btn.dropdown-toggle(data-toggle="dropdown") Inputs 
+                span.caret
+            ul.dropdown-menu
+                - for i in inputPins
+                    li
+                        a(tabindex="-1") Pin #{i}
+                li.divider
+                li
+                    a(tabindex="-1") All
+        .well.collection#input-collection
+            i empty

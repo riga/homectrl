@@ -9,8 +9,12 @@ var Plugin = Class.extend({
         throw "NotImplementedError";
     },
 
+    url: function(url) {
+        return hc.url("plugins/" + this.name + "/" + url);
+    },
+
     getTemplate: function(tmpl, callback) {
-        $.post(hc.url("plugins/" + this.name + "/template"), {tmpl: tmpl}, callback);
+        $.post(this.url("template"), {tmpl: tmpl}, callback);
         return this;
     }
 });
