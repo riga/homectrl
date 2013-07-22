@@ -1,4 +1,4 @@
-var TestPlugin = Plugin.extend({
+var GPIOPlugin = Plugin.extend({
     init: function() {
         this._super();
 
@@ -207,4 +207,4 @@ var TestPlugin = Plugin.extend({
 
 });
 
-$.Topic("plugin.register").publish(new TestPlugin());
+$.Topic("plugin.register").publish(new GPIOPlugin());
