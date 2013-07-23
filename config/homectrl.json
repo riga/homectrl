@@ -1,19 +1,19 @@
 {
     "server": {
-        "base": "/homectrl/",
+        "base": "/",
         "host": "0.0.0.0",
-        "port": 8080
+        "port": 80
     },
 
     "websocket": {
         "host": "rpi1.local",
-        "port": 8081
+        "port": 81
     },
 
     "user": {
-        "auth": false,
+        "auth": true,
         "name": "marcel",
-        "pass": "123456"
+        "pass": "bFaxDhy"
     },
 
     "logging": {

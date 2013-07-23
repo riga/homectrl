@@ -3,17 +3,29 @@ style.
         margin-bottom: 10px;
     }
 
-    #img {
+    #cam-img {
         margin: 5px;
         border-radius: 4px;
     }
 
-h3 Cam Stream
+    #cam-refresh {
+        margin-bottom: 10px;
+    }
+
+h3.text-center Cam Stream
 
 .well
-    .text-center
-        .switch#cam-switch(data-on="primary", data-off="default", data-animated="false")
-            input(type="checkbox")
+    //- .text-center
+    //-     .switch#cam-switch(data-on="primary", data-off="default", data-animated="false")
+    //-         input(type="checkbox")
+
+    //- .text-center
+    //-     img#cam-img
+
+    .text-center#cam-refresh
+        button.btn.btn-primary Refresh Video 
+            i.icon-refresh.icon-white
 
     .text-center
-        img#img
+        video#cam-video(width="640", height="480", autoplay="autoplay")
+            source(src="/plugins/cam/stream", type="video/mp4")
