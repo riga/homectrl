@@ -1,0 +1,29 @@
+{
+	"express": {
+		"host": "0.0.0.0",
+		"port": 8080,
+		"root": "/"
+	},
+
+	"cache": {
+		"maxAge"  : 0,
+		"hidden"  : false,
+		"redirect": true
+	},
+
+	"session": {
+		"name"  : "sid",
+		"secret": "8w7lQHUDxYKejFe29zSMMCd0muhHpRPN",
+		"proxy" : null,
+		"cookie": {
+			"maxAge": 86400000
+		},
+		"resave": true,
+		"saveUninitialized": true
+	},
+
+	"auth": {
+		"user": null,
+		"pass": "foobar"
+	}
+}

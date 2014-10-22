@@ -1,0 +1,39 @@
+{
+	"logging": {
+
+		"levels": {
+			"all"    : 0,
+			"access" : 1,
+			"debug"  : 2,
+			"info"   : 3,
+			"warning": 4,
+			"error"  : 5,
+			"fatal"  : 6
+		},
+
+		"colors": {
+			"all"    : "white",
+			"access" : "magenta", 
+			"debug"  : "cyan",
+			"info"   : "green",
+			"warning": "yellow",
+			"error"  : "red",
+			"fatal"  : "red"
+		},
+
+		"transports": {
+			"Console": [{
+				"level": "all",
+				"colorize": true,
+				"handleExceptions": true
+
+			}],
+			"File": [{
+				"level": "all",
+				"colorize": false,
+				"json": false,
+				"handleExceptions": true
+			}]
+		}
+	}
+}

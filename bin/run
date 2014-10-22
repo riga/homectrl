@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+
+// load node modules
+var path = require("path"),
+    fs   = require("fs"),
+    cp   = require("child_process");
+
+var cwd = path.resolve(__dirname, "..");
+
+// check/copy json config files
+var confPath   = path.join(cwd,      "conf");
+var samplePath = path.join(confPath, "samples");
+
+fs.readdirSync(samplePath).forEach(function(file) {
+  // copy all json files if they do not exist yet
+  if (!/\.json$/.test(file)) {
+    return;
+  }
+
+  var src = path.join(samplePath, file);
+  var dst = path.join(confPath,   file);
+
+  if (!fs.existsSync(dst)) {
+    fs.writeFileSync(dst, fs.readFileSync(src));
+  }
+});
+
+// fork the server
+var opts = {
+  cwd: cwd,
+  env: process.env
+};
+cp.fork("lib/server.js", process.argv.splice(2), opts);

@@ -1,32 +1,41 @@
 {
-    "name": "homectrl",
-    "preferGlobal": false,
-    "version": "0.0.1",
-    "author": "Marcel Rieger <marcelrieger@me.com>",
-    "description": "Lightweight Home Automation Web App for the Raspberry Pi using Node, socket.io and Bootstrap.",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/riga/homectrl.git"
-    },
-    "keywords": [
-        "raspberry",
-        "pi",
-        "camera",
-        "temperature",
-        "remote",
-        "jacks",
-        "home automation"
-    ],
-    "dependencies" : {
-        "express": "3.3.4",
-        "jade": "0.33.0",
-        "node-controller": "0.0.2",
-        "nconf": "0.6.7",
-        "winston": "0.7.2",
-        "socket.io": "0.9.16"
-    },
-    "license": "GPL",
-    "engines": {
-        "node": ">=0.6"
-    }
+	"name": "homectrl",
+	"preferGlobal": false,
+	"version": "0.0.1",
+	"author": "Marcel Rieger <marcelrieger@icloud.com>",
+	"description": "Lightweight Home Automation Web App for the Raspberry Pi using Nodejs, socket.io and Bootstrap.",
+	"keywords": [
+		"raspberry",
+		"pi",
+		"camera",
+		"temperature",
+		"remote",
+		"jacks",
+		"home automation"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/riga/homectrl.git"
+	},
+	"dependencies" : {
+		"express": "4.9.6",
+		"socket.io": "1.1.0",
+		"jade": "1.7.0",
+		"commander": "2.3.0",
+		"node-oo": "1.0.0",
+		"winston": "0.8.1",
+		"nconf": "0.6.9",
+		"morgan": "1.3.2",
+		"compression": "1.1.0",
+		"express-session": "1.8.2",
+		"basic-auth": "1.0.0",
+		"body-parser": "1.9.0",
+		"uuid": "2.0.1",
+		"async": "0.9.0"
+	},
+	"engines": {
+		"node": "0.10.X"
+	},
+	"license": "GPL",
+	"main": "./bin/run"
 }
