@@ -25,6 +25,17 @@ fs.readdirSync(samplePath).forEach(function(file) {
   }
 });
 
+// create a symlink node_modules/homectrl/index.js -> lib/public.js
+// to be able to require "homectrl" in plugins
+var hcModDir = path.resolve(cwd, "node_modules/homectrl");
+if (!fs.existsSync(hcModDir)) {
+  fs.mkdirSync(hcModDir);
+
+  var src = path.resolve(cwd, "lib/public.js");
+  var dst = path.join(hcModDir, "index.js");
+  fs.symlinkSync(src, dst);
+}
+
 // fork the server
 var opts = {
   cwd: cwd,
