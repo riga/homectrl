@@ -3,7 +3,7 @@
 var hc = require("homectrl");
 
 
-module.exports = hc.HCPlugin._extend({
+module.exports = hc.Plugin._extend({
 
   setup: function() {
     console.log("setup called of temperatures plugin");

@@ -2,5 +2,16 @@ doctype
 html
   head
     title homectrl
+
+    link(rel="stylesheet",
+         href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css")
+
   body
     h1 Hello #{user}. It works!
+
+    script.
+      window._homectrl = {};
+      window._homectrl.root = "#{root}";
+
+    script(src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js",
+           data-main="#{root}static/js/main")
