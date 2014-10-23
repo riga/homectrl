@@ -5,9 +5,33 @@ html
 
     link(rel="stylesheet",
          href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css")
+    link(rel="stylesheet", href="#{root}static/css/styles.min.css")
 
-  body
-    h1 Hello #{user}. It works!
+    meta(name="apple-mobile-web-app-capable", content="yes")
+    meta(name="viewport", content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes")
+
+  body.mobile
+
+    div#homectrl
+
+      nav#menu(role="navigation")
+        ul.nav.nav-pills.nav-stacked(role="menu")
+          li.divider
+          li
+            a(href="#about") About
+
+      div#page
+        div#header
+          div
+            span
+              button.btn.btn-default#menu-toggle(role="button")
+                i.glyphicon.glyphicon-align-justify
+
+        div#content
+
+        div#blocker
+
+      div#splash
 
     script.
       window._tmplData = {

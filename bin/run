@@ -44,6 +44,7 @@ symlink("lib/public.js", "node_modules/homectrl/index.js");
 
 // create symlinks to make files available on client-side
 symlink("node_modules/node-oo/index.js", "static/vendor/class.js");
+symlink("node_modules/eventemitter2/lib/eventemitter2.js", "static/vendor/eventemitter2.js");
 
 // fork the server
 var opts = {

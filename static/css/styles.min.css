@@ -1,0 +1,6 @@
+#homectrl #menu{position:absolute;top:0;left:0;height:100%;width:100%;width:0;padding-top:44px;overflow-x:hidden;overflow-y:auto}#homectrl #page{position:absolute;top:0;left:0;height:100%;width:100%;z-index:1;background-color:#fff;overflow:hidden;box-shadow:-1px 0 4px #888;transition:left .2s cubic-bezier(0.19,1,0.22,1)}
+#homectrl #page #header{position:absolute;top:0;left:0;height:100%;width:100%;height:44px;z-index:1;display:table;padding:0 6px;background-color:lightgrey}
+#homectrl #page #header>div{height:100%;display:table-cell;vertical-align:middle}#homectrl #page #header>div>span{height:100%}#homectrl #page #content{position:absolute;top:0;left:0;height:100%;width:100%;top:44px;overflow:scroll}
+#homectrl #page #blocker{position:absolute;top:0;left:0;height:100%;width:100%;display:none}#homectrl #splash{position:absolute;top:0;left:0;height:100%;width:100%;z-index:1;background-color:white}
+#homectrl.desktop #menu{width:250px}#homectrl.desktop.menu-open #page{left:250px}#homectrl.desktop.menu-open #page #blocker{display:block}#homectrl.mobile #menu{width:80%}
+#homectrl.mobile.menu-open #page{left:80%}#homectrl.mobile.menu-open #page #blocker{display:block}.nav.nav-pills.nav-stacked .divider{height:1px;overflow:hidden;background-color:#e5e5e5}

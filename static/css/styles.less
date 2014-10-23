@@ -1,0 +1,99 @@
+@header-height: 44px;
+@menu-width-desktop: 250px;
+@menu-width-mobile: 80%;
+
+
+.absolute() {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+.homectrl-switch(@width) {
+    #menu {
+        width: @width;
+    }
+
+    &.menu-open {
+        #page {
+            left: @width;
+
+            #blocker {
+                display: block;
+            }
+        }
+    }
+}
+
+#homectrl {
+    #menu {
+        .absolute();
+        width: 0px;
+        padding-top: @header-height;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    #page {
+        .absolute();
+        z-index: 1;
+        background-color: #fff;
+        overflow: hidden;
+        box-shadow: -1px 0px 4px #888;
+        transition: left 0.2s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+
+        #header {
+            .absolute();
+            height: @header-height;
+            z-index: 1;
+            display: table;
+            padding: 0px 6px;
+            background-color: lightgrey;
+
+            > div {
+                height: 100%;
+                display: table-cell;
+                vertical-align: middle;
+
+                > span {
+                    height: 100%;
+                }
+            }
+        }
+
+        #content {
+            .absolute();
+            top: @header-height;
+            overflow: scroll;
+        }
+
+        #blocker {
+            .absolute();
+            display: none;
+        }
+    }
+
+    #splash {
+        .absolute();
+        z-index: 1;
+        background-color: white;
+    }
+
+    &.desktop {
+        .homectrl-switch(@menu-width-desktop);
+    }
+    &.mobile {
+        .homectrl-switch(@menu-width-mobile);
+    }
+}
+
+
+.nav.nav-pills.nav-stacked {
+    .divider {
+        height: 1px;
+        overflow: hidden;
+        background-color: #e5e5e5;
+    }
+}

@@ -1,3 +1,5 @@
-define(["jquery", "Class"], function($, Class) {
-  console.log("homectrl", $, Class);
+define(["emitter"], function(Emitter) {
+  return {
+    Plugin: Emitter
+  }
 });
