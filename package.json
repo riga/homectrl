@@ -20,7 +20,7 @@
 	"dependencies" : {
 		"express": "4.9.6",
 		"socket.io": "1.1.0",
-		"node-oo": "1.0.0",
+		"node-oo": "1.1.1",
 		"eventemitter2": "0.4.14",
 		"commander": "2.3.0",
 		"winston": "0.8.1",
@@ -30,7 +30,8 @@
 		"compression": "1.1.0",
 		"express-session": "1.8.2",
 		"basic-auth": "1.0.0",
-		"body-parser": "1.9.0"
+		"body-parser": "1.9.0",
+		"mkdirp": "0.5.0"
 	},
 	"engines": {
 		"node": "0.10.X"

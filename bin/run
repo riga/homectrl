@@ -5,6 +5,10 @@ var path = require("path"),
     fs   = require("fs"),
     cp   = require("child_process");
 
+// load npm modules
+var mkdirp = require("mkdirp");
+
+
 var cwd = path.resolve(__dirname, "..");
 
 // check/copy json config files
@@ -25,16 +29,21 @@ fs.readdirSync(samplePath).forEach(function(file) {
   }
 });
 
+var symlink = function(src, dst) {
+  src = path.resolve(cwd, src);
+  dst = path.resolve(cwd, dst);
+  if (fs.existsSync(dst)) return;
+  var dstDir = path.dirname(dst);
+  mkdirp.sync(dstDir);
+  fs.symlinkSync(src, dst);
+};
+
 // create a symlink node_modules/homectrl/index.js -> lib/public.js
 // to be able to require "homectrl" in plugins
-var hcModDir = path.resolve(cwd, "node_modules/homectrl");
-if (!fs.existsSync(hcModDir)) {
-  fs.mkdirSync(hcModDir);
+symlink("lib/public.js", "node_modules/homectrl/index.js");
 
-  var src = path.resolve(cwd, "lib/public.js");
-  var dst = path.join(hcModDir, "index.js");
-  fs.symlinkSync(src, dst);
-}
+// create symlinks to make files available on client-side
+symlink("node_modules/node-oo/index.js", "static/vendor/class.js");
 
 // fork the server
 var opts = {

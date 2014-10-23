@@ -1,3 +1,3 @@
-define(["jquery"], function($) {
-  console.log("homectrl", $);
+define(["jquery", "Class"], function($, Class) {
+  console.log("homectrl", $, Class);
 });
