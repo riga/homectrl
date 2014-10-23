@@ -3,7 +3,7 @@
 	"preferGlobal": false,
 	"version": "0.0.1",
 	"author": "Marcel Rieger <marcelrieger@icloud.com>",
-	"description": "Lightweight Home Automation Web App for the Raspberry Pi using Nodejs, socket.io and Bootstrap.",
+	"description": "Lightweight plugin-based home automation web app for the Raspberry Pi using nodejs, socket.io and bootstrap.",
 	"keywords": [
 		"raspberry",
 		"pi",

@@ -1,4 +1,6 @@
 homectrl
 ========
 
-Lightweight Home Automation Web App for the Raspberry Pi using Nodejs, socket.io and Bootstrap.
+Lightweight plugin-based home automation web app for the Raspberry Pi using nodejs, socket.io and bootstrap.
+
+Note: Ongoing rewrite.
