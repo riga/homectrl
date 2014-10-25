@@ -5,6 +5,10 @@
 		"root": "/"
 	},
 
+	"io": {
+		"port": 8081
+	},
+
 	"cache": {
 		"maxAge"  : 0,
 		"dotfiles": "ignore",
@@ -25,5 +29,9 @@
 	"auth": {
 		"user": null,
 		"pass": "foobar"
+	},
+
+	"client": {
+		"useCdn": true
 	}
 }

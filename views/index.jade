@@ -3,20 +3,24 @@ html
   head
     title homectrl
 
-    link(rel="stylesheet",
-         href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css")
+    if useCdn
+      link(rel="stylesheet",
+           href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css")
+    else
+      link(rel="stylesheet", href="#{root}static/vendor/bootstrap/css/bootstrap-3.2.0.min.css")
+
     link(rel="stylesheet", href="#{root}static/css/styles.min.css")
 
     meta(name="apple-mobile-web-app-capable", content="yes")
     meta(name="viewport", content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes")
 
-  body.mobile
+  body
 
     div#homectrl
 
       nav#menu(role="navigation")
         ul.nav.nav-pills.nav-stacked(role="menu")
-          li.divider
+          li.divider#menu-item-hook
           li
             a(href="#about") About
 
@@ -28,16 +32,23 @@ html
                 i.glyphicon.glyphicon-align-justify
 
         div#content
+          div#about.
+            About
 
         div#blocker
 
-      div#splash
+      div#splashscreen
 
     script.
       window._tmplData = {
         root   : "#{root}",
-        plugins: "#{plugins}".split(",")
+        plugins: "#{plugins}".split(","),
+        useCdn : #{useCdn},
+        ioPort : #{ioPort}
       };
 
-    script(src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js",
-           data-main="#{root}static/js/main")
+    if useCdn
+      script(src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js",
+             data-main="#{root}static/js/main")
+    else
+      script(src="#{root}static/vendor/require-2.1.15.min.js", data-main="#{root}static/js/main")

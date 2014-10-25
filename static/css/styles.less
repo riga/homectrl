@@ -6,6 +6,14 @@
 .absolute() {
     position: absolute;
     top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+}
+
+.absolute2() {
+    position: absolute;
+    top: 0px;
     left: 0px;
     height: 100%;
     width: 100%;
@@ -19,6 +27,7 @@
     &.menu-open {
         #page {
             left: @width;
+            right: -@width;
 
             #blocker {
                 display: block;
@@ -28,12 +37,19 @@
 }
 
 #homectrl {
+    .absolute();
+    overflow: hidden;
+
     #menu {
-        .absolute();
+        .absolute2();
         width: 0px;
         padding-top: @header-height;
         overflow-x: hidden;
         overflow-y: auto;
+
+        .glyphicon {
+            margin-right: 5px;
+        }
     }
 
     #page {
@@ -45,7 +61,7 @@
         transition: left 0.2s cubic-bezier(0.190, 1.000, 0.220, 1.000);
 
         #header {
-            .absolute();
+            .absolute2();
             height: @header-height;
             z-index: 1;
             display: table;
@@ -66,7 +82,17 @@
         #content {
             .absolute();
             top: @header-height;
-            overflow: scroll;
+            overflow: auto;
+
+            #about {
+                .absolute();
+                display: none;
+            }
+
+            .plugin {
+                .absolute();
+                display: none;
+            }
         }
 
         #blocker {
@@ -95,5 +121,14 @@
         height: 1px;
         overflow: hidden;
         background-color: #e5e5e5;
+
+        &:first-child {
+            display: none;
+        }
     }
+}
+
+.glyphicon-none:before {
+    content: "\2122";
+    color: transparent !important;
 }
