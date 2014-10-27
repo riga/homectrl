@@ -1,4 +1,21 @@
-.container
+.container-fluid
+
   .row
-    .col-lg-2.col-md-3.col-sm-6.col-xs-12
-      input#test(type="checkbox")
+    .col-12.text-center
+      button.btn.btn-default#reset-all(role="button")
+        i.glyphicon.glyphicon-repeat
+        span  Reset all
+
+      button.btn.btn-default#dir-toggle(role="button")
+        i.glyphicon.glyphicon-eye-close
+        span  Hide Directions
+
+  .row#gpios
+    .gpio.col-lg-2.col-md-3.col-sm-4.col-xs-6.text-center(data-bind="gpio")
+      h4
+       | GPIO #
+       span(data-bind="num")
+      div.direction
+        input(type="checkbox")
+      div.value
+        input(type="checkbox")

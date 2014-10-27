@@ -1,4 +1,25 @@
+@label-width: 40%;
+
 #content > .plugin#gpio {
+
+    padding: 20px 5px;
+
+    .row {
+        margin-bottom: 15px;
+
+        button {
+            margin-right: 8px;
+        }
+
+        .gpio {
+            padding-bottom: 30px;
+
+            .direction {
+                margin-bottom: 10px;
+            }
+        }
+    }
+
 
     .bootstrap-switch {
         &.bootstrap-switch-focused {
@@ -8,5 +29,9 @@
         .bootstrap-switch-container {
             transition-duration: 0.1s;
         }
+    }
+
+    button > i.glyphicon {
+        margin-right: 4px;
     }
 }

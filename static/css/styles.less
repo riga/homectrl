@@ -51,6 +51,7 @@
 #homectrl {
     .absolute();
     overflow: hidden;
+    background-color: white;
 
     #menu {
         .absolute2();
@@ -135,7 +136,8 @@
         #content {
             .absolute();
             top: @header-height;
-            overflow: auto;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
 
             .info {
                 .absolute();
