@@ -1,0 +1,10 @@
+{
+	"name": "homectrl-plugin-gpio",
+	"preferGlobal": false,
+	"version": "0.0.1",
+	"author": "Marcel Rieger <marcelrieger@icloud.com>",
+	"description": "GPIO plugin for homectrl (https://github.com/riga/homectrl.git).",
+	"dependencies" : {
+		"gpio": "0.2.5"
+	}
+}
