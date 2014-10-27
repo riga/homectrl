@@ -6,6 +6,7 @@ define(["homectrl"], function(hc) {
       this._super();
 
       this.dirTogglesVisible = true;
+      this.valueWaitCounter  = 0;
 
       this.addCss("styles.min.css");
       this.setLabel("GPIO");
@@ -26,6 +27,8 @@ define(["homectrl"], function(hc) {
         readonly: false
       };
 
+      this.nodes.gpios = {};
+
       this.setupUI();
     },
 
@@ -45,8 +48,8 @@ define(["homectrl"], function(hc) {
 
           // render
           self.nodes.$content.html(tmpl).find("#gpios").render(res.data, directives);
-          self.nodes.$content.find(".direction > input").bootstrapSwitch(self.dirSwitchConfig);
-          self.nodes.$content.find(".value > input").bootstrapSwitch(self.valueSwitchConfig);
+          self.nodes.$content.find(".direction input").bootstrapSwitch(self.dirSwitchConfig);
+          self.nodes.$content.find(".value input").bootstrapSwitch(self.valueSwitchConfig);
 
           // store nodes
           self.nodes.$dirToggle = self.nodes.$content.find("#dir-toggle");
@@ -64,8 +67,69 @@ define(["homectrl"], function(hc) {
           // apply data from cookies
           var dirTogglesVisible = $.cookie("dirTogglesVisible") != "false";
           self.toggleDirectionToggles(dirTogglesVisible);
+
+          // setup gpios
+          self.setupGpios(res.data);
         });
       });
+    },
+
+    setupGpios: function(data) {
+      var self = this;
+
+      data.forEach(function(gpio) {
+        var $gpio      = self.nodes.$content.find("#gpios > .gpio#" + gpio.num);
+        var $value     = $gpio.find(".value input");
+        var $direction = $gpio.find(".direction input");
+
+        // set value and direction
+        $value.bootstrapSwitch("state", gpio.value == 1, true);
+        $direction.bootstrapSwitch("state", gpio.direction == "in", true);
+
+        // events
+        $value.on("switchChange.bootstrapSwitch", function(event, state) {
+          $value.bootstrapSwitch("disabled", true);
+          self.valueWaitCounter++;
+          self.nodes.$resetAll.toggleClass("disabled", true);
+          self.sendMessage("valueChange", gpio.num, state ? 1 : 0);
+        });
+        $direction.on("switchChange.bootstrapSwitch", function(event, state) {
+          $direction.bootstrapSwitch("disabled", true);
+          $value.bootstrapSwitch("disabled", true);
+          self.sendMessage("directionChange", gpio.num, state ? "in" : "out");
+        });
+
+        // store nodes
+        self.nodes.gpios[gpio.num] = {
+          $gpio     : $gpio,
+          $value    : $value,
+          $direction: $direction
+        };
+      });
+
+      return this;
+    },
+
+    onMessage: function(topic, num, value) {
+      var nodes = this.nodes.gpios[num];
+      if (!nodes) return this;
+
+      if (topic == "valueChange") {
+        nodes.$value.bootstrapSwitch("state", value == 1, true);
+        nodes.$value.bootstrapSwitch("disabled", false);
+        this.valueWaitCounter--;
+        this.valueWaitCounter = Math.max(this.valueWaitCounter, 0);
+        if (this.valueWaitCounter == 0) {
+          this.nodes.$resetAll.toggleClass("disabled", false);
+        }
+      } else if (topic == "directionChange") {
+        nodes.$direction.bootstrapSwitch("state", value == "in", true);
+        nodes.$direction.bootstrapSwitch("disabled", false);
+        nodes.$value.bootstrapSwitch("readonly", value == "in");
+        nodes.$value.bootstrapSwitch("disabled", false);
+      }
+
+      return this;
     },
 
     toggleDirectionToggles: function(desired) {

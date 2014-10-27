@@ -1,6 +1,5 @@
 var hc    = require("homectrl"),
-    GPIO  = require("gpio"),
-    async = require("async");
+    GPIO  = require("gpio");
 
 
 module.exports = hc.Plugin._extend({
@@ -14,8 +13,7 @@ module.exports = hc.Plugin._extend({
     this.setupRoutes();
 
     // setup pins
-    // this.config.get("gpioNums").forEach(this.setupGpio.bind(this));
-    this.config.get("gpioNums").forEach(function(num) { this.gpios[num] = {}; }, this);
+    this.config.get("gpioNums").forEach(this.setupGpio.bind(this));
 
     this.logger.info("gpio: setup with gpio numbers", Object.keys(this.gpios).join(", "));
   },
@@ -27,33 +25,12 @@ module.exports = hc.Plugin._extend({
       var data = Object.keys(self.gpios).map(function(num) {
         var gpio = self.gpios[num];
         return {
-          num      : num,
+          num      : parseInt(num),
+          value    : gpio.value,
           direction: gpio.direction
         };
       });
       hc.send(res, data);
-    });
-
-    this.POST("/set", function(req, res) {
-      var num = parseInt(req.param("gpio"));
-      if (isNaN(num)) return hc.send(res, 400, "gpio is not an integer");
-
-      var value = parseInt(req.param("value"));
-      if (isNaN(value)) return hc.send(res, 400, "value is not an integer");
-
-      self.setValue(num, value);
-      hc.send(res);
-    });
-
-    this.POST("/direction", function(req, res) {
-      var num = parseInt(req.param("gpio"));
-      if (isNaN(num)) return hc.send(res, 400, "gpio is not an integer");
-
-      var direction = req.param("direction");
-      if (!direction) return hc.send(res, 400, "direction not set");
-
-      self.setDirection(num, direction);
-      hc.send(res);
     });
 
     this.POST("/resetall", function(req, res) {
@@ -64,19 +41,15 @@ module.exports = hc.Plugin._extend({
     return this;
   },
 
-  setupGpio: function(num, callback) {
+  setupGpio: function(num) {
     var self = this;
 
-    callback = callback || function(){};
-
-    if (this.gpios[num]) return callback("gpio %s already setup", num);
+    if (this.gpios[num]) return this;
 
     var gpio = this.gpios[num] = GPIO.export(num, {
       direction: "out",
       interval : 100,
       ready    : function() {
-        gpio.set(0);
-
         gpio.on("valueChange", function(value) {
           self.sendMessage("all", "valueChange", num, value);
         });
@@ -85,14 +58,14 @@ module.exports = hc.Plugin._extend({
           self.sendMessage("all", "directionChange", num, direction);
         });
 
-        callback(null);
+        gpio.set(0);
       }
     });
     return this;
   },
 
   setDirection: function(num, direction) {
-    var gpio = this.gpios[n];
+    var gpio = this.gpios[num];
     if (gpio) gpio.setDirection(direction);
     return this;
   },
@@ -108,6 +81,15 @@ module.exports = hc.Plugin._extend({
       this.setValue(num, 0);
     }, this);
     return this;
-  }
+  },
 
+  onMessage: function(socketId, topic, num, value) {
+    if (topic == "valueChange") {
+      this.setValue(num, value);
+    } else if (topic == "directionChange") {
+      this.setDirection(num, value);
+    }
+
+    return this;
+  }
 });

@@ -3,3 +3,4 @@ conf/*.json
 *.sublime-workspace
 static/vendor/class.js
 static/vendor/eventemitter2.js
+*.log

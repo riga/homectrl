@@ -1,4 +1,4 @@
-define(["jquery", "io", "emitter"], function($, io, Emitter) {
+define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, Transparency) {
 
   var HomeCtrl, Plugin, homectrl;
 
@@ -32,6 +32,11 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
 
     setupUI: function() {
       var self = this;
+
+      // only use data-bind attributes for transparency rendering
+      Transparency.matcher = function(element, key) {
+        return element.el.getAttribute("data-bind") == key;
+      };
 
       // store nodes
       this.nodes.$main         = $("#homectrl").first();
