@@ -1,6 +1,7 @@
-@header-height: 44px;
+@header-height: 40px;
 @menu-width-desktop: 250px;
 @menu-width-mobile: 80%;
+@menu-width-breakpoint: 640px;
 
 
 .absolute() {
@@ -33,6 +34,17 @@
                 display: block;
             }
         }
+
+        // &.menu-on-canvas {
+        //   #page {
+        //         left: @width;
+        //         right: 0px;
+
+        //         #blocker {
+        //             display: none;
+        //         }
+        //     }
+        // }
     }
 }
 
@@ -47,7 +59,19 @@
         overflow-x: hidden;
         overflow-y: auto;
 
-        .glyphicon {
+        .dropdown-header {
+            padding: 5px 20px;
+
+            &:not(:first-child) {
+                margin-top: 5px;
+            }
+        }
+
+        .nav-pills > li > a {
+            border-radius: 0px;
+        }
+
+        a > i.glyphicon:first-child {
             margin-right: 5px;
         }
     }
@@ -64,18 +88,31 @@
             .absolute2();
             height: @header-height;
             z-index: 1;
-            display: table;
-            padding: 0px 6px;
-            background-color: lightgrey;
+            color: white;
 
             > div {
-                height: 100%;
-                display: table-cell;
-                vertical-align: middle;
+                .absolute2();
+                padding: 0px 4px;
+                display: table;
 
-                > span {
-                    height: 100%;
+                &:first-child {
+                    z-index: 2 !important;
                 }
+
+                > div {
+                    height: 100%;
+                    display: table-cell;
+                    vertical-align: middle;
+
+                    > span {
+                        height: 100%;
+                    }
+                }
+            }
+
+            #title-hook > span {
+                display: none;
+                font-size: 18px;
             }
         }
 
@@ -84,7 +121,7 @@
             top: @header-height;
             overflow: auto;
 
-            #about {
+            .info {
                 .absolute();
                 display: none;
             }
@@ -101,16 +138,15 @@
         }
     }
 
-    #splash {
+    #splashscreen {
         .absolute();
         z-index: 1;
         background-color: white;
     }
 
-    &.desktop {
-        .homectrl-switch(@menu-width-desktop);
-    }
-    &.mobile {
+    .homectrl-switch(@menu-width-desktop);
+
+    @media (max-width:@menu-width-breakpoint) {
         .homectrl-switch(@menu-width-mobile);
     }
 }
@@ -121,10 +157,6 @@
         height: 1px;
         overflow: hidden;
         background-color: #e5e5e5;
-
-        &:first-child {
-            display: none;
-        }
     }
 }
 

@@ -11,7 +11,6 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
       this.socket  = null;
       this.plugins = {};
 
-      this.deviceMode      = null;
       this.menuOpen        = false;
       this.currentViewName = null;
 
@@ -35,25 +34,13 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
       var self = this;
 
       // store nodes
-      this.nodes.$main         = $("#homectrl");
-      this.nodes.$blocker      = $("#blocker");
-      this.nodes.$menuToggle   = $("#menu-toggle");
-      this.nodes.$menuItemHook = $("#menu-item-hook");
-
-      // functionality to change the mode, i.e. "desktop" or "mobile"
-      var updateMode = function() {
-        var width    = $(window).width();
-
-        var isMobile = width <= 1000; // TODO: define breakpoint somewhere else
-        var mode     = isMobile ? "mobile" : "desktop";
-
-        if (mode != self.deviceMode) {
-          self.deviceMode = mode;
-          self.nodes.$main.toggleClass("desktop", !isMobile).toggleClass("mobile", isMobile);
-        }
-      };
-      $(window).resize(updateMode);
-      updateMode();
+      this.nodes.$main         = $("#homectrl").first();
+      this.nodes.$menu         = this.nodes.$main.find("#menu").first();
+      this.nodes.$menuItemHook = this.nodes.$menu.find("#menu-item-hook").first();
+      this.nodes.$menuToggle   = this.nodes.$main.find("#page > #header #menu-toggle").first();
+      this.nodes.$content      = this.nodes.$main.find("#page > #content").first();
+      this.nodes.$blocker      = this.nodes.$main.find("#page > #blocker").first();
+      this.nodes.$titleHook    = this.nodes.$main.find("#page > #header #title-hook").first();
 
       // react to hash changes
       $(window).on("hashchange", this.applyHash.bind(this));
@@ -110,8 +97,9 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
     setupPlugins: function(callback) {
       var self = this;
 
-      var menuItemTmpl = "<li><a><i></i> <span></span></a></li>";
+      var menuItemTmpl = "<li class='plugin'><a><i></i> <span></span></a></li>";
       var contentTmpl  = "<div class='plugin'></div>";
+      var titleTmpl    = "<span class='plugin'><i></i> <span></span></span>";
 
       // create plugin modules and require them
       var pluginModules = this.pluginNames.map(function(name) {
@@ -136,17 +124,24 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
             .attr("id", name);
 
           // add the menu item before the divider and store nodes
-          var $menuItem = $(menuItemTmpl).insertBefore(self.nodes.$menuItemHook);
-          p.nodes.$menuItemLabel = $menuItem.find("a > span");
-          p.nodes.$menuItemIcon  = $menuItem.find("a > i");
+          p.nodes.$menuItem      = $(menuItemTmpl)
+            .insertBefore(self.nodes.$menuItemHook)
+            .attr("id", name);
+          p.nodes.$menuItemLabel = p.nodes.$menuItem.find("a > span");
+          p.nodes.$menuItemIcon  = p.nodes.$menuItem.find("a > i");
+
+          // title node
+          p.nodes.$title = $(titleTmpl)
+            .appendTo(self.nodes.$titleHook)
+            .attr("id", name);
 
           // menu event
-          $menuItem.find("a").click(function(event) {
+          p.nodes.$menuItem.find("a").click(function(event) {
             self.toggleMenu(false);
           });
 
           // manipulate the menu item
-          $menuItem.find("a").attr("href", "#" + name);
+          p.nodes.$menuItem.find("a").attr("href", "#" + name);
           p.setLabel(name);
           p.setIcon("chevron-right");
 
@@ -185,11 +180,15 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
       // a plugin?
       if (~this.pluginNames.indexOf(viewName)) {
         var p = this.getPlugin(viewName);
-        if (p instanceof Plugin) p.onShow();
-        selector += ".plugin";
+        if (!(p instanceof Plugin)) return this;
+        p.onShow();
+        selector += ".plugin#" + viewName;
       }
 
-      $(selector).show();
+      this.nodes.$content.find(selector).show();
+      this.nodes.$menu.find(selector).toggleClass("active", true);
+      this.nodes.$titleHook.find(selector).show();
+
       this.currentViewName = viewName;
 
       return this;
@@ -207,7 +206,10 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
         selector += ".plugin";
       }
 
-      $(selector).hide();
+      this.nodes.$content.find(selector).hide();
+      this.nodes.$menu.find(selector).toggleClass("active", false);
+      this.nodes.$titleHook.find(selector).hide();
+
       this.currentViewName = null;
 
       return this;
@@ -234,20 +236,29 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
 
       this.name  = name;
 
-      this.label = name;
+      this.label     = null;
+      this.iconClass = null;
+
       this.nodes = {
         $content      : null,
+        $menuItem     : null,
         $menuItemLabel: null,
-        $menuItemIcon : null
+        $menuItemIcon : null,
+        $title        : null
       };
     },
 
     setup: function() {
+      this.setLabel(this.name);
+      this.setIcon("none");
       return this;
     },
 
     setLabel: function(label) {
       this.label = label;
+      if (this.nodes.$title) {
+        this.nodes.$title.find("span").text(label);
+      }
       if (this.nodes.$menuItemLabel) {
         this.nodes.$menuItemLabel.html(label);
       }
@@ -257,6 +268,10 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
     setIcon: function(iconClass) {
       if (!/^glyphicon\ glyphicon\-/.test(iconClass)) {
         iconClass = "glyphicon glyphicon-" + iconClass;
+      }
+      this.iconClass = iconClass;
+      if (this.nodes.$title) {
+        this.nodes.$title.find("i").attr("class", iconClass);
       }
       if (this.nodes.$menuItemIcon) {
         this.nodes.$menuItemIcon.attr("class", iconClass);

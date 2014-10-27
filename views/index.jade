@@ -20,20 +20,31 @@ html
 
       nav#menu(role="navigation")
         ul.nav.nav-pills.nav-stacked(role="menu")
+          li.dropdown-header Plugins
           li.divider#menu-item-hook
-          li
-            a(href="#about") About
+
+          li.dropdown-header Info
+          li.info#About
+            a(href="#About")
+              i.glyphicon.glyphicon-info-sign
+              |  About
 
       div#page
-        div#header
+        div#header.label-primary
           div
-            span
-              button.btn.btn-default#menu-toggle(role="button")
-                i.glyphicon.glyphicon-align-justify
+            div
+              span
+                button.btn.btn-primary#menu-toggle(role="button")
+                  i.glyphicon.glyphicon-align-justify
+
+          div
+            div.text-center#title-hook
+              span#About
+                i.glyphicon.glyphicon-info-sign
+                |  About
 
         div#content
-          div#about.
-            About
+          div.info#About About
 
         div#blocker
 
