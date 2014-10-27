@@ -2,6 +2,11 @@ var hc    = require("homectrl"),
     GPIO  = require("gpio");
 
 
+var IN   = "in",
+    OUT  = "out",
+    HIGH = 1,
+    LOW  = 0;
+
 module.exports = hc.Plugin._extend({
 
   setup: function() {
@@ -47,7 +52,7 @@ module.exports = hc.Plugin._extend({
     if (this.gpios[num]) return this;
 
     var gpio = this.gpios[num] = GPIO.export(num, {
-      direction: "out",
+      direction: OUT,
       interval : 100,
       ready    : function() {
         gpio.on("valueChange", function(value) {
@@ -56,9 +61,10 @@ module.exports = hc.Plugin._extend({
 
         gpio.on("directionChange", function(direction) {
           self.sendMessage("all", "directionChange", num, direction);
+          if (direction == OUT) self.setValue(num, LOW);
         });
 
-        gpio.set(0);
+        gpio.set(LOW);
       }
     });
     return this;
@@ -78,7 +84,7 @@ module.exports = hc.Plugin._extend({
 
   resetValues: function() {
     Object.keys(this.gpios).forEach(function(num) {
-      this.setValue(num, 0);
+      this.setValue(num, LOW);
     }, this);
     return this;
   },
