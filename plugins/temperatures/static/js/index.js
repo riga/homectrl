@@ -7,6 +7,7 @@ define(["homectrl"], function(hc) {
 
       var self = this;
 
+      this.addCss("styles.min.css");
       this.setLabel("Temperatures");
       this.setIcon("fire");
 

@@ -14,7 +14,7 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
       this.menuOpen        = false;
       this.currentViewName = null;
 
-      this.pluginNames = window._tmplData.plugins;
+      this.pluginNames = window._hcData.plugins;
     },
 
     setup: function() {
@@ -69,9 +69,9 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
     setupSocket: function(callback) {
       var self = this;
 
-      var socketPath = window._tmplData.root + "socket.io";
+      var socketPath = window._hcData.root + "socket.io";
       var socketHost = window.location.protocol + "//" + window.location.hostname + ":"
-                     + window._tmplData.ioPort;
+                     + window._hcData.ioPort;
 
       this.socket = io.connect(socketHost, { path: socketPath });
 
@@ -103,7 +103,7 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
 
       // create plugin modules and require them
       var pluginModules = this.pluginNames.map(function(name) {
-        return "plugin/" + name + "/static/index";
+        return "plugins/" + name + "/index";
       });
 
       require(pluginModules, function() {
@@ -124,7 +124,7 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
             .attr("id", name);
 
           // add the menu item before the divider and store nodes
-          p.nodes.$menuItem      = $(menuItemTmpl)
+          p.nodes.$menuItem = $(menuItemTmpl)
             .insertBefore(self.nodes.$menuItemHook)
             .attr("id", name);
           p.nodes.$menuItemLabel = p.nodes.$menuItem.find("a > span");
@@ -279,12 +279,19 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
       return this;
     },
 
+    addCss: function(file) {
+      $("<link rel='stylesheet'></link>")
+        .attr("href", window._hcData.root + "plugins/" + this.name + "/static/css/" + file)
+        .appendTo("head");
+      return this;
+    },
+
     _resolve: function(method, path) {
       var args = Array.prototype.slice.call(arguments, 2);
       if (path.substr(0, 1) == "/") {
         path = path.substr(1);
       }
-      path = window._tmplData.root + "plugins/" + this.name + "/" + path;
+      path = window._hcData.root + "plugins/" + this.name + "/" + path;
       args.unshift(path);
       return $[method].apply($, args);
     },
