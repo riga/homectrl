@@ -6,8 +6,11 @@ html
     if useCdn
       link(rel="stylesheet",
            href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css")
+      link(rel="stylesheet",
+           href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.1.0/css/bootstrap3/bootstrap-switch.min.css")
     else
-      link(rel="stylesheet", href="#{root}static/vendor/bootstrap/css/bootstrap-3.2.0.min.css")
+      link(rel="stylesheet", href="#{root}static/vendor/bootstrap-3.2.0/css/bootstrap.min.css")
+      link(rel="stylesheet", href="#{root}static/vendor/bootstrap.switch-3.1.0/css/bootstrap.switch.min.css")
 
     link(rel="stylesheet", href="#{root}static/css/styles.min.css")
 
@@ -38,10 +41,16 @@ html
                   i.glyphicon.glyphicon-align-justify
 
           div
-            div.text-center#title-hook
+            div#title-hook
               span#About
                 i.glyphicon.glyphicon-info-sign
                 |  About
+
+          div
+            div.text-right
+              span
+                button.btn.btn-primary#reload(role="button")
+                  i.glyphicon.glyphicon-refresh
 
         div#content
           div.info#About About

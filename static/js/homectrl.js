@@ -38,6 +38,7 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
       this.nodes.$menu         = this.nodes.$main.find("#menu").first();
       this.nodes.$menuItemHook = this.nodes.$menu.find("#menu-item-hook").first();
       this.nodes.$menuToggle   = this.nodes.$main.find("#page > #header #menu-toggle").first();
+      this.nodes.$reload       = this.nodes.$main.find("#page > #header #reload").first();
       this.nodes.$content      = this.nodes.$main.find("#page > #content").first();
       this.nodes.$blocker      = this.nodes.$main.find("#page > #blocker").first();
       this.nodes.$titleHook    = this.nodes.$main.find("#page > #header #title-hook").first();
@@ -47,8 +48,11 @@ define(["jquery", "io", "emitter"], function($, io, Emitter) {
 
       // bind events
       this.nodes.$menuToggle.click(function(event) {
-        event.preventDefault();
         self.toggleMenu();
+      });
+
+      this.nodes.$reload.click(function(event) {
+        window.location.reload();
       });
 
       this.nodes.$blocker.click(function(event) {

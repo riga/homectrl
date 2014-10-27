@@ -32,6 +32,6 @@
 	},
 
 	"client": {
-		"useCdn": true
+		"useCdn": false
 	}
 }
