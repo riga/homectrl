@@ -1,10 +1,11 @@
 // configure requirejs
 var paths = {
-  vendor   : "../vendor",
-  jquery   : "../vendor/jquery-2.1.1.min",
-  cookie   : "../vendor/jquery.cookie-1.4.1.min",
-  bootstrap: "../vendor/bootstrap/js/bootstrap-3.2.0.min",
-  io       : "../vendor/socket.io-1.1.0.min"
+  vendor      : "../vendor",
+  jquery      : "../vendor/jquery-2.1.1.min",
+  cookie      : "../vendor/jquery.cookie-1.4.1.min",
+  transparency: "../vendor/jquery.transparency-0.10.0.min",
+  bootstrap   : "../vendor/bootstrap/js/bootstrap-3.2.0.min",
+  io          : "../vendor/socket.io-1.1.0.min"
 };
 
 if (window._hcData.useCdn) {
@@ -23,8 +24,10 @@ require.config({
   baseUrl: window._hcData.root + "static/js",
   paths: paths,
   shim: {
-    bootstrap: ["jquery"],
-    homectrl : ["bootstrap", "cookie"]
+    cookie      : ["jquery"],
+    transparency: ["jquery"],
+    bootstrap   : ["jquery"],
+    homectrl    : ["bootstrap", "cookie", "transparency"]
   }
 });
 
