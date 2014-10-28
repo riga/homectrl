@@ -10,6 +10,8 @@ define(["homectrl"], function(hc) {
     setup: function() {
       this._super();
 
+      var self = this;
+
       this.dirTogglesVisible = true;
       this.valueWaitCounter  = 0;
 
@@ -34,49 +36,86 @@ define(["homectrl"], function(hc) {
 
       this.nodes.gpios = {};
 
-      this.setupUI();
-    },
-
-    setupUI: function() {
-      var self = this;
-
+      // load gpio data and start
       this.GET("/gpios", function(res) {
-        self.getTemplate("index.jade", function(tmpl) {
-
-          var directives = {
-            gpio: {
-              action: function(data) {
-                $(data.element).attr("id", this.num);
-              }
-            }
-          };
-
-          // render
-          self.nodes.$content.html(tmpl).find("#gpios").render(res.data, directives);
-          self.nodes.$content.find(".direction input").bootstrapSwitch(self.dirSwitchConfig);
-          self.nodes.$content.find(".value input").bootstrapSwitch(self.valueSwitchConfig);
-
-          // store nodes
-          self.nodes.$dirToggle = self.nodes.$content.find("#dir-toggle");
-          self.nodes.$resetAll  = self.nodes.$content.find("#reset-all");
-
-          // events
-          self.nodes.$dirToggle.click(function(event) {
-            self.toggleDirectionToggles();
-          });
-
-          self.nodes.$resetAll.click(function() {
-            self.POST("/resetall");
-          });
-
-          // apply data from cookies
-          var dirTogglesVisible = $.cookie("dirTogglesVisible") != "false";
-          self.toggleDirectionToggles(dirTogglesVisible);
-
-          // setup gpios
+        self.setupUI(res.data, function(err) {
+          self.setupMessages();
           self.setupGpios(res.data);
         });
       });
+    },
+
+    setupUI: function(data, callback) {
+      var self = this;
+
+      this.getTemplate("index.jade", function(tmpl) {
+
+        var directives = {
+          gpio: {
+            action: function(data) {
+              $(data.element).attr("id", this.num);
+            }
+          }
+        };
+
+        // render
+        self.nodes.$content.html(tmpl).find("#gpios").render(data, directives);
+        self.nodes.$content.find(".direction input").bootstrapSwitch(self.dirSwitchConfig);
+        self.nodes.$content.find(".value input").bootstrapSwitch(self.valueSwitchConfig);
+
+        // store nodes
+        self.nodes.$dirToggle = self.nodes.$content.find("#dir-toggle");
+        self.nodes.$resetAll  = self.nodes.$content.find("#reset-all");
+
+        // events
+        self.nodes.$dirToggle.click(function(event) {
+          self.toggleDirectionToggles();
+        });
+
+        self.nodes.$resetAll.click(function() {
+          self.POST("/resetall");
+        });
+
+        // apply data from cookies
+        var dirTogglesVisible = $.cookie("dirTogglesVisible") != "false";
+        self.toggleDirectionToggles(dirTogglesVisible);
+
+        (callback || function(){})(null);
+      });
+
+      return this;
+    },
+
+    setupMessages: function() {
+      var self = this;
+
+      this.on("in.valueChange", function(num, value) {
+        var nodes = self.nodes.gpios[num];
+        if (!nodes) return;
+
+        nodes.$value.bootstrapSwitch("state", value == HIGH, true);
+        nodes.$value.bootstrapSwitch("disabled", false);
+        self.valueWaitCounter--;
+        self.valueWaitCounter = Math.max(self.valueWaitCounter, 0);
+        if (self.valueWaitCounter == 0) {
+          self.nodes.$resetAll.toggleClass("disabled", false);
+        }
+      });
+
+      this.on("in.directionChange", function(num, direction) {
+        var nodes = self.nodes.gpios[num];
+        if (!nodes) return;
+
+        nodes.$direction.bootstrapSwitch("state", direction == IN, true);
+        nodes.$direction.bootstrapSwitch("disabled", false);
+        nodes.$value.bootstrapSwitch("readonly", direction == IN);
+        nodes.$value.bootstrapSwitch("disabled", false);
+        if (direction == OUT) {
+          nodes.$value.bootstrapSwitch("state", false);
+        }
+      });
+
+      return this;
     },
 
     setupGpios: function(data) {
@@ -97,12 +136,12 @@ define(["homectrl"], function(hc) {
           $value.bootstrapSwitch("disabled", true);
           self.valueWaitCounter++;
           self.nodes.$resetAll.toggleClass("disabled", true);
-          self.sendMessage("valueChange", gpio.num, state ? HIGH : LOW);
+          self.emit("out.valueChange", gpio.num, state ? HIGH : LOW);
         });
         $direction.on("switchChange.bootstrapSwitch", function(event, state) {
           $direction.bootstrapSwitch("disabled", true);
           $value.bootstrapSwitch("disabled", true);
-          self.sendMessage("directionChange", gpio.num, state ? IN : OUT);
+          self.emit("out.directionChange", gpio.num, state ? IN : OUT);
         });
 
         // store nodes
@@ -112,31 +151,6 @@ define(["homectrl"], function(hc) {
           $direction: $direction
         };
       });
-
-      return this;
-    },
-
-    onMessage: function(topic, num, value) {
-      var nodes = this.nodes.gpios[num];
-      if (!nodes) return this;
-
-      if (topic == "valueChange") {
-        nodes.$value.bootstrapSwitch("state", value == HIGH, true);
-        nodes.$value.bootstrapSwitch("disabled", false);
-        this.valueWaitCounter--;
-        this.valueWaitCounter = Math.max(this.valueWaitCounter, 0);
-        if (this.valueWaitCounter == 0) {
-          this.nodes.$resetAll.toggleClass("disabled", false);
-        }
-      } else if (topic == "directionChange") {
-        nodes.$direction.bootstrapSwitch("state", value == IN, true);
-        nodes.$direction.bootstrapSwitch("disabled", false);
-        nodes.$value.bootstrapSwitch("readonly", value == IN);
-        nodes.$value.bootstrapSwitch("disabled", false);
-        if (value == OUT) {
-          nodes.$value.bootstrapSwitch("state", false);
-        }
-      }
 
       return this;
     },

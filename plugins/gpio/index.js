@@ -7,20 +7,61 @@ var IN   = "in",
     HIGH = 1,
     LOW  = 0;
 
+
 module.exports = hc.Plugin._extend({
 
   setup: function() {
     this._super();
 
+    // setup gpios
     this.gpios = {};
-
-    // routes
-    this.setupRoutes();
-
-    // setup pins
     this.config.get("gpioNums").forEach(this.setupGpio.bind(this));
 
+    // messages and routes
+    this.setupMessages();
+    this.setupRoutes();
+
     this.logger.info("gpio: setup with gpio numbers", Object.keys(this.gpios).join(", "));
+  },
+
+  setupGpio: function(num) {
+    var self = this;
+
+    if (this.gpios[num]) return this;
+
+    var gpio = this.gpios[num] = GPIO.export(num, {
+      direction: OUT,
+      interval : 100,
+      ready    : function() {
+        gpio.on("valueChange", function(value) {
+          self.emit("out.valueChange", "all", num, value);
+        });
+
+        gpio.on("directionChange", function(direction) {
+          self.emit("out.directionChange", "all", num, direction);
+          if (direction == OUT) gpio.set(LOW);
+        });
+
+        gpio.set(LOW);
+      }
+    });
+    return this;
+  },
+
+  setupMessages: function() {
+    var self = this;
+
+    this.on("in.valueChange", function(socketId, num, value) {
+      var gpio = self.gpios[num];
+      if (gpio) gpio.set(value);
+    });
+
+    this.on("in.directionChange", function(socketId, num, direction) {
+      var gpio = self.gpios[num];
+      if (gpio) gpio.setDirection(direction);
+    });
+
+    return this;
   },
 
   setupRoutes: function() {
@@ -39,63 +80,13 @@ module.exports = hc.Plugin._extend({
     });
 
     this.POST("/resetall", function(req, res) {
-      self.resetValues();
+      Object.keys(self.gpios).forEach(function(num) {
+        self.gpios[num].set(LOW);
+      });
       hc.send(res);
     });
 
     return this;
-  },
-
-  setupGpio: function(num) {
-    var self = this;
-
-    if (this.gpios[num]) return this;
-
-    var gpio = this.gpios[num] = GPIO.export(num, {
-      direction: OUT,
-      interval : 100,
-      ready    : function() {
-        gpio.on("valueChange", function(value) {
-          self.sendMessage("all", "valueChange", num, value);
-        });
-
-        gpio.on("directionChange", function(direction) {
-          self.sendMessage("all", "directionChange", num, direction);
-          if (direction == OUT) self.setValue(num, LOW);
-        });
-
-        gpio.set(LOW);
-      }
-    });
-    return this;
-  },
-
-  setDirection: function(num, direction) {
-    var gpio = this.gpios[num];
-    if (gpio) gpio.setDirection(direction);
-    return this;
-  },
-
-  setValue: function(num, value) {
-    var gpio = this.gpios[num];
-    if (gpio) gpio.set(value);
-    return this;
-  },
-
-  resetValues: function() {
-    Object.keys(this.gpios).forEach(function(num) {
-      this.setValue(num, LOW);
-    }, this);
-    return this;
-  },
-
-  onMessage: function(socketId, topic, num, value) {
-    if (topic == "valueChange") {
-      this.setValue(num, value);
-    } else if (topic == "directionChange") {
-      this.setDirection(num, value);
-    }
-
-    return this;
   }
+
 });
