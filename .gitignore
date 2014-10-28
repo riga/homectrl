@@ -4,3 +4,4 @@ conf/*.json
 static/vendor/class.js
 static/vendor/eventemitter2.js
 *.log
+*.DS_Store

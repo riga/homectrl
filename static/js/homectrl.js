@@ -198,6 +198,8 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
       this.nodes.$menu.find(selector).toggleClass("active", true);
       this.nodes.$titleHook.find(selector).show();
 
+      $("head > title").html("homectrl - " + viewName);
+
       this.currentViewName = viewName;
 
       return this;
@@ -218,6 +220,8 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
       this.nodes.$content.find(selector).hide();
       this.nodes.$menu.find(selector).toggleClass("active", false);
       this.nodes.$titleHook.find(selector).hide();
+
+      $("head > title").html("homectrl");
 
       this.currentViewName = null;
 

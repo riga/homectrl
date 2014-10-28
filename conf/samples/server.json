@@ -27,8 +27,9 @@
 	},
 
 	"auth": {
-		"user": null,
-		"pass": "foobar"
+		"user"    : null,
+		"pass"    : "foobar",
+		"deadtime": 5000
 	},
 
 	"client": {

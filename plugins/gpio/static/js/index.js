@@ -16,7 +16,7 @@ define(["homectrl"], function(hc) {
       this.valueWaitCounter  = 0;
 
       this.addCss("styles.min.css");
-      this.setLabel("GPIO");
+      this.setLabel("");
       this.setIcon("heart");
 
       this.dirSwitchConfig = {
