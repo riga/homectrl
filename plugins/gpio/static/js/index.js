@@ -16,8 +16,8 @@ define(["homectrl"], function(hc) {
       this.valueWaitCounter  = 0;
 
       this.addCss("styles.min.css");
-      this.setLabel("");
-      this.setIcon("heart");
+      this.setLabel("GPIO");
+      this.setIcon("heart-empty");
 
       this.dirSwitchConfig = {
         onText  : "In",
