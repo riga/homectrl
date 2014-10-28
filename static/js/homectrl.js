@@ -84,18 +84,18 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
 
       this.socket = io.connect(socketHost, { path: socketPath });
 
+      this.socket.on("id", function(id) {
+        $.cookie("socketId", id);
+      });
+
       this.socket.on("message.plugin", function(pluginName, topic) {
         var p = self.getPlugin(pluginName);
         if (!(p instanceof Plugin)) return;
 
         var args = Array.prototype.slice.call(arguments, 2);
-        args.unshift(topic);
+        args.unshift("in." + topic);
 
-        p.onMessage.apply(p, args);
-      });
-
-      this.socket.on("id", function(id) {
-        $.cookie("socketId", id);
+        p.emit.apply(p, args);
       });
 
       this.socket.on("connect", callback || function(){});
@@ -241,7 +241,9 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
   Plugin = Emitter._extend({
 
     init: function(name) {
-      this._super();
+      this._super({ wildcard: true });
+
+      var self = this;
 
       this.name  = name;
 
@@ -255,6 +257,16 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
         $menuItemIcon : null,
         $title        : null
       };
+
+      // catch and adjust emitted outgoing messages
+      this.on("out.*", function() {
+        var args  = Array.prototype.slice.call(arguments);
+        var event = this.event.split(".");
+
+        args = ["message.plugin", self.name, event[1]].concat(args);
+
+        homectrl.socket.emit.apply(homectrl.socket, args);
+      });
     },
 
     setup: function() {
@@ -333,18 +345,8 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
 
     onHide: function() {
       return this;
-    },
-
-    onMessage: function(topic) {
-      return this;
-    },
-
-    sendMessage: function(topic) {
-      var args = Array.prototype.slice.call(arguments, 1);
-      args = ["message.plugin", this.name, topic].concat(args);
-      homectrl.socket.emit.apply(homectrl.socket, args);
-      return this;
     }
+
   });
 
 
