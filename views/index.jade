@@ -65,7 +65,7 @@ html
     script.
       window._hcData = {
         root   : "#{root}",
-        plugins: "#{plugins}".split(","),
+        plugins: "#{plugins}" ? "#{plugins}".split(",") : [],
         useCdn : #{useCdn},
         ioPort : #{ioPort}
       };
