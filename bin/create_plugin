@@ -1,0 +1,80 @@
+#!/usr/bin/env node
+
+// node modules
+var fs   = require("fs"),
+    path = require("path");
+
+// external modules
+var mu = require("mustache");
+
+// local modules
+var createCli = require("../lib/util.js").createCli;
+
+
+var render
+var createPlugin = function(name, minimal, callback) {
+  var srcDir = path.resolve(__dirname, "../plugins/_templates", minimal ? "minimal" : "verbose");
+  console.log(srcDir);
+  var dstDir = name;
+
+  var readdir = function(dir) {
+    return fs.readdirSync(dir).map(function(elem) {
+      return path.join(dir, elem);
+    });
+  };
+
+  var cut = function(elem) {
+    return elem.substr(srcDir.length);
+  };
+
+  var stack = readdir(srcDir);
+  while (stack.length) {
+    var elem = stack.shift();
+    var stat = fs.statSync(elem);
+    if (stat.isDirectory()) {
+      var relPath = path.join(dstDir, cut(elem));
+      if (!fs.existsSync(relPath)) fs.mkdirSync(relPath);
+      stack = stack.concat(readdir(elem))
+    } else if (stat.isFile()) {
+      var relPath = path.join(dstDir, cut(elem));
+      var content = fs.readFileSync(elem, { encoding: "utf8" });
+      content = mu.render(content, { name: name });
+      fs.writeFileSync(relPath, content);
+    }
+  }
+  callback(null);
+};
+
+
+
+// define the actual cli argumets
+var args = [
+  {
+    name: "-n, --name [NAME]",
+    desc: "the name of the module"
+  }, {
+    name: "-m, --minimal",
+    desc: "create a minimal plugin"
+  }
+];
+
+// parse args
+var cli = createCli(args, "./create_plugin", "0.0.1").parse(process.argv);
+
+// name is required
+if (!cli.name) {
+  console.log("a name is required");
+  process.exit(1);
+}
+
+// does the folder already exist?
+if (fs.existsSync(cli.name)) {
+  console.log("a folder with that name already exists");
+  process.exit(1);
+}
+fs.mkdirSync(cli.name);
+
+createPlugin(cli.name, cli.minimal, function(err) {
+  if (err) throw err;
+  console.log("create plugin", cli.name);
+});

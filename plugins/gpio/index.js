@@ -10,8 +10,8 @@ var IN   = "in",
     LOW  = 0;
 
 
-// create our own server-side plugin class by extending hc.Plugin
-var GPIOPlugin = hc.Plugin._extend({
+// create and export our own server-side plugin class by extending hc.Plugin
+module.exports = hc.Plugin._extend({
 
   setup: function() {
     this._super();
@@ -105,7 +105,3 @@ var GPIOPlugin = hc.Plugin._extend({
   }
 
 });
-
-
-// export our plugin
-module.exports = GPIOPlugin;

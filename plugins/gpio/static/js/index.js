@@ -6,8 +6,8 @@ define(["homectrl"], function(hc) {
       HIGH = 1,
       LOW  = 0;
 
-  // create our own client-side plugin class by extending hc.Plugin
-  var GPIOPlugin = hc.Plugin._extend({
+  // create and return our own client-side plugin class by extending hc.Plugin
+  return hc.Plugin._extend({
 
     setup: function() {
       this._super();
@@ -193,5 +193,4 @@ define(["homectrl"], function(hc) {
 
   });
 
-  return GPIOPlugin;
 });

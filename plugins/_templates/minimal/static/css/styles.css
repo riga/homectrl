@@ -1,0 +1,4 @@
+#content > .plugin#{{name}} .example-class {
+    // give all your classes a prefix like this example-class has
+    // to avoid naming clashes with other plugins
+}
