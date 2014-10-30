@@ -1,4 +1,4 @@
-// configure requirejs
+// define paths used by requirejs
 var paths = {
   vendor        : "../vendor",
   jquery        : "../vendor/jquery-2.1.1.min",
@@ -9,6 +9,7 @@ var paths = {
   io            : "../vendor/socket.io-1.1.0.min"
 };
 
+// exchange some module paths in case CDN's should be used
 if (window._hcData.useCdn) {
   paths.jquery    = "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min";
   paths.jqCookie  = "//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min";
@@ -16,11 +17,12 @@ if (window._hcData.useCdn) {
   paths.io        = "//cdn.socket.io/socket.io-1.1.0";
 }
 
-// add plugins to paths as "plugins/<name>"
+// add plugins paths (/static/js) as "plugins/<name>"
 window._hcData.plugins.forEach(function(name) {
   paths["plugins/" + name] = "../../plugins/" + name + "/static/js";
 });
 
+// actually configurate requirejs
 require.config({
   baseUrl: window._hcData.root + "static/js",
   paths: paths,
@@ -33,4 +35,5 @@ require.config({
   }
 });
 
+// start the app by loading homectrl
 require(["homectrl"]);

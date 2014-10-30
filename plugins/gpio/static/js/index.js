@@ -1,10 +1,12 @@
 define(["homectrl"], function(hc) {
 
+  // define some constants, same as on server-side
   var IN   = "in",
       OUT  = "out",
       HIGH = 1,
       LOW  = 0;
 
+  // create our own client-side plugin class by extending hc.Plugin
   var GPIOPlugin = hc.Plugin._extend({
 
     setup: function() {
@@ -12,31 +14,17 @@ define(["homectrl"], function(hc) {
 
       var self = this;
 
+      // state variables
       this.dirTogglesVisible = true;
       this.valueWaitCounter  = 0;
 
+      // add our css file, set the label and bootstrap icon class
       this.addCss("styles.min.css");
       this.setLabel("GPIO");
       this.setIcon("heart-empty");
 
-      this.dirSwitchConfig = {
-        onText  : "In",
-        offText : "Out",
-        onColor : "warning",
-        offColor: "info",
-        size    : "small"
-      };
-      this.valueSwitchConfig = {
-        onText  : "High",
-        offText : "Low",
-        onColor : "success",
-        offColor: "danger",
-        readonly: false
-      };
-
-      this.nodes.gpios = {};
-
       // load gpio data and start
+      this.nodes.gpios = {};
       this.GET("/gpios", function(res) {
         self.setupUI(res.data, function(err) {
           self.setupMessages();
@@ -48,8 +36,10 @@ define(["homectrl"], function(hc) {
     setupUI: function(data, callback) {
       var self = this;
 
+      // load the template
       this.getTemplate("index.jade", function(tmpl) {
 
+        // use jquery.transparency directives to assign proper gpio nums to node ids
         var directives = {
           gpio: {
             action: function(data) {
@@ -58,10 +48,22 @@ define(["homectrl"], function(hc) {
           }
         };
 
-        // render
+        // render and setup the bootstrap switches
         self.nodes.$content.html(tmpl).find("#gpios").render(data, directives);
-        self.nodes.$content.find(".direction input").bootstrapSwitch(self.dirSwitchConfig);
-        self.nodes.$content.find(".value input").bootstrapSwitch(self.valueSwitchConfig);
+        self.nodes.$content.find(".direction input").bootstrapSwitch({
+          onText  : "In",
+          offText : "Out",
+          onColor : "warning",
+          offColor: "info",
+          size    : "small"
+        });
+        self.nodes.$content.find(".value input").bootstrapSwitch({
+          onText  : "High",
+          offText : "Low",
+          onColor : "success",
+          offColor: "danger",
+          readonly: false
+        });
 
         // store nodes
         self.nodes.$dirToggle = self.nodes.$content.find("#dir-toggle");
@@ -71,7 +73,6 @@ define(["homectrl"], function(hc) {
         self.nodes.$dirToggle.click(function(event) {
           self.toggleDirectionToggles();
         });
-
         self.nodes.$resetAll.click(function() {
           self.POST("/resetall");
         });
@@ -89,12 +90,20 @@ define(["homectrl"], function(hc) {
     setupMessages: function() {
       var self = this;
 
+      // the incomming messages are basically confirmations of actions
+      // invoked in this session (or even other sessions)
+
+      // handle incomming valueChange messages
       this.on("in.valueChange", function(num, value) {
         var nodes = self.nodes.gpios[num];
         if (!nodes) return;
 
+        // update the switch state and disabled state
         nodes.$value.bootstrapSwitch("state", value == HIGH, true);
         nodes.$value.bootstrapSwitch("disabled", false);
+
+        // remove the disabled state for the resetAll button when
+        // there's no pending action, i.e. the valueWaitCounter is 0
         self.valueWaitCounter--;
         self.valueWaitCounter = Math.max(self.valueWaitCounter, 0);
         if (self.valueWaitCounter == 0) {
@@ -102,14 +111,19 @@ define(["homectrl"], function(hc) {
         }
       });
 
+      // handle incomming directionChange messages
       this.on("in.directionChange", function(num, direction) {
         var nodes = self.nodes.gpios[num];
         if (!nodes) return;
 
+        // update switch states and disabled states
         nodes.$direction.bootstrapSwitch("state", direction == IN, true);
         nodes.$direction.bootstrapSwitch("disabled", false);
         nodes.$value.bootstrapSwitch("readonly", direction == IN);
         nodes.$value.bootstrapSwitch("disabled", false);
+
+        // when the new direction is OUT, set the switch state to false/LOW
+        // which is propagated to the server (no third argument!)
         if (direction == OUT) {
           nodes.$value.bootstrapSwitch("state", false);
         }
@@ -131,7 +145,7 @@ define(["homectrl"], function(hc) {
         $value.bootstrapSwitch("readonly", gpio.direction == IN);
         $direction.bootstrapSwitch("state", gpio.direction == IN, true);
 
-        // events
+        // bind switch events
         $value.on("switchChange.bootstrapSwitch", function(event, state) {
           $value.bootstrapSwitch("disabled", true);
           self.valueWaitCounter++;

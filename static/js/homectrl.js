@@ -2,6 +2,8 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
 
   var HomeCtrl, Plugin, homectrl;
 
+
+  // the global HomeCtrl class
   HomeCtrl = Emitter._extend({
 
     init: function() {
@@ -11,9 +13,11 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
       this.socket  = null;
       this.plugins = {};
 
+      // state variables
       this.menuOpen        = false;
       this.currentViewName = null;
 
+      // store the pluginNames given in the template data
       this.pluginNames = window._hcData.plugins;
     },
 
@@ -23,6 +27,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
       this.setupUI();
       this.setupSocket(function() {
         self.setupPlugins(function() {
+          // initially, apply the first hash
           self.applyHash();
         });
       });
@@ -55,16 +60,13 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
       this.nodes.$menuToggle.click(function(event) {
         self.toggleMenu();
       });
-
       this.nodes.$reload.click(function(event) {
         window.location.reload();
       });
-
       this.nodes.$blocker.click(function(event) {
         event.preventDefault();
         self.toggleMenu(false);
       });
-
       $("#menu > ul > li > a").click(function(event) {
         self.toggleMenu(false);
       });
@@ -78,20 +80,23 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
     setupSocket: function(callback) {
       var self = this;
 
-      var socketPath = window._hcData.root + "socket.io";
+      // create host and path, then connect
       var socketHost = window.location.protocol + "//" + window.location.hostname + ":"
                      + window._hcData.ioPort;
+      var socketPath = window._hcData.root + "socket.io";
+      this.socket    = io.connect(socketHost, { path: socketPath });
 
-      this.socket = io.connect(socketHost, { path: socketPath });
-
+      // store the socketId in a cookie so that it is send in ech http request
       this.socket.on("id", function(id) {
         $.cookie("socketId", id);
       });
 
+      // handle incomming plugin messages
       this.socket.on("message.plugin", function(pluginName, topic) {
         var p = self.getPlugin(pluginName);
         if (!(p instanceof Plugin)) return;
 
+        // prepend "in.<topic>" to mark the message as incomming
         var args = Array.prototype.slice.call(arguments, 2);
         args.unshift("in." + topic);
 
@@ -106,6 +111,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
     setupPlugins: function(callback) {
       var self = this;
 
+      // html templates
       var menuItemTmpl = "<li class='plugin'><a><i></i> <span></span></a></li>";
       var contentTmpl  = "<div class='plugin'></div>";
       var titleTmpl    = "<span class='plugin'><i></i> <span></span></span>";
@@ -115,6 +121,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
         return "plugins/" + name + "/index";
       });
 
+      // require plugins in parallel
       require(pluginModules, function() {
         Array.prototype.slice.call(arguments).forEach(function(Cls, i) {
           var name = self.pluginNames[i];
@@ -124,6 +131,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
             return;
           };
 
+          // create a new instance of the class and store it
           var p = new Cls(name);
           self.plugins[name] = p;
 
@@ -168,6 +176,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
     },
 
     applyHash: function() {
+      // takes the hash from the url and updates the view
       var hash = window.location.hash.substr(1);
       if (!hash) {
         if (this.pluginNames.length) hash = this.pluginNames[0];
@@ -180,6 +189,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
     },
 
     showView: function(viewName) {
+      // do nothing when there's no view change
       if (!viewName || viewName == this.currentViewName) return this;
 
       this.hideCurrentView();
@@ -194,10 +204,12 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
         selector += ".plugin#" + viewName;
       }
 
+      // show content, update menu entry and title
       this.nodes.$content.find(selector).show();
       this.nodes.$menu.find(selector).toggleClass("active", true);
       this.nodes.$titleHook.find(selector).show();
 
+      // update the global title tag
       $("head > title").html("homectrl - " + viewName);
 
       this.currentViewName = viewName;
@@ -217,10 +229,12 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
         selector += ".plugin";
       }
 
+      // hide content, update meny entry and title
       this.nodes.$content.find(selector).hide();
       this.nodes.$menu.find(selector).toggleClass("active", false);
       this.nodes.$titleHook.find(selector).hide();
 
+      // update the global title tag
       $("head > title").html("homectrl");
 
       this.currentViewName = null;
@@ -235,6 +249,9 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
       }
 
       this.menuOpen = !this.menuOpen;
+
+      // simply add or remove the menu-open class,
+      // all style changes are css-based
       this.nodes.$main.toggleClass("menu-open", this.menuOpen);
 
       return this;
@@ -242,6 +259,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
   });
 
 
+  // the client-side Plugin class that should be extended by plugins
   Plugin = Emitter._extend({
 
     init: function(name) {
@@ -274,6 +292,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
     },
 
     setup: function() {
+      // initially, use the name as our label and an empty icon class
       this.setLabel(this.name);
       this.setIcon("none");
       return this;
@@ -291,6 +310,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
     },
 
     setIcon: function(iconClass) {
+      // ensure a bootstrap conform icon class
       if (!/^glyphicon\ glyphicon\-/.test(iconClass)) {
         iconClass = "glyphicon glyphicon-" + iconClass;
       }
@@ -305,6 +325,8 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
     },
 
     addCss: function(file) {
+      // append a css file ref to the global head tag
+      // the file will be relative to /static/css
       $("<link rel='stylesheet'></link>")
         .attr("href", window._hcData.root + "plugins/" + this.name + "/static/css/" + file)
         .appendTo("head");
@@ -312,6 +334,8 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
     },
 
     _resolve: function(method, path) {
+      // creates functions that invoke http requests,
+      // might not be used by plugins directly
       var args = Array.prototype.slice.call(arguments, 2);
       if (path.substr(0, 1) == "/") {
         path = path.substr(1);
@@ -322,18 +346,21 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
     },
 
     GET: function() {
+      // invoke a GET request
       var args = Array.prototype.slice.call(arguments);
       args.unshift("get");
       return this._resolve.apply(this, args);
     },
 
     POST: function() {
+      // invoke a POST request
       var args = Array.prototype.slice.call(arguments);
       args.unshift("post");
       return this._resolve.apply(this, args);
     },
 
     getTemplate: function(path, data) {
+      // return a jade-rendered template
       var args = Array.prototype.slice.call(arguments, 2);
       if (typeof data === "function") {
         args.unshift(data);
@@ -344,10 +371,12 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
     },
 
     onShow: function() {
+      // called when the plugin is shown
       return this;
     },
 
     onHide: function() {
+      // called when the plugin is hidden
       return this;
     }
 

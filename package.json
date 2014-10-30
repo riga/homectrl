@@ -1,12 +1,12 @@
 {
 	"name": "homectrl",
 	"preferGlobal": false,
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"author": "Marcel Rieger <marcelrieger@icloud.com>",
-	"description": "Lightweight plugin-based home automation web app for the Raspberry Pi using nodejs, socket.io and bootstrap.",
+	"description": "Lightweight plugin-based Home Automation App for the Raspberry Pi using Nodejs, Socket.io and Bootstrap.",
 	"keywords": [
 		"raspberry",
-		"pi",
+		"rpi",
 		"camera",
 		"temperature",
 		"remote",
@@ -20,7 +20,7 @@
 	"dependencies" : {
 		"express": "4.9.6",
 		"socket.io": "1.1.0",
-		"node-oo": "1.2.0",
+		"node-oo": "1.2.3",
 		"eventemitter2": "0.4.14",
 		"commander": "2.3.0",
 		"winston": "0.8.1",
@@ -38,6 +38,5 @@
 	"engines": {
 		"node": "0.10.X"
 	},
-	"license": "GPL",
-	"main": "./bin/run"
+	"license": "GPL"
 }
