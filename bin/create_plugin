@@ -27,6 +27,18 @@ var createPlugin = function(name, minimal, callback) {
     return elem.substr(srcDir.length);
   };
 
+  var filenameMapping = {
+    name: name
+  };
+  var changeFilename = function(name) {
+    Object.keys(filenameMapping).forEach(function(key) {
+      var value = filenameMapping[key];
+      var re = new RegExp("__" + key + "__", "g");
+      name = name.replace(re, value);
+    });
+    return name;
+  };
+
   var stack = readdir(srcDir);
   while (stack.length) {
     var elem = stack.shift();
@@ -34,9 +46,13 @@ var createPlugin = function(name, minimal, callback) {
     if (stat.isDirectory()) {
       var relPath = path.join(dstDir, cut(elem));
       if (!fs.existsSync(relPath)) fs.mkdirSync(relPath);
-      stack = stack.concat(readdir(elem))
+      stack = stack.concat(readdir(elem));
     } else if (stat.isFile()) {
-      var relPath = path.join(dstDir, cut(elem));
+      var name = path.basename(elem);
+      var dir  = path.dirname(elem);
+      // replace parts of the name
+      name = changeFilename(name);
+      var relPath = path.join(dstDir, cut(path.join(dir, name)));
       var content = fs.readFileSync(elem, { encoding: "utf8" });
       content = mu.render(content, { name: name });
       fs.writeFileSync(relPath, content);
