@@ -13,9 +13,11 @@ var createCli = require("../lib/util.js").createCli;
 
 var render
 var createPlugin = function(name, minimal, callback) {
-  var srcDir = path.resolve(__dirname, "../plugins/_templates", minimal ? "minimal" : "verbose");
-  console.log(srcDir);
   var dstDir = name;
+  var srcDirs = [];
+
+  srcDirs.push(path.resolve(__dirname, "../plugins/_templates/common"));
+  srcDirs.push(path.resolve(__dirname, "../plugins/_templates", minimal ? "minimal" : "verbose"));
 
   var readdir = function(dir) {
     return fs.readdirSync(dir).map(function(elem) {
@@ -23,7 +25,7 @@ var createPlugin = function(name, minimal, callback) {
     });
   };
 
-  var cut = function(elem) {
+  var cut = function(elem, srcDir) {
     return elem.substr(srcDir.length);
   };
 
@@ -39,25 +41,31 @@ var createPlugin = function(name, minimal, callback) {
     return name;
   };
 
-  var stack = readdir(srcDir);
-  while (stack.length) {
-    var elem = stack.shift();
-    var stat = fs.statSync(elem);
-    if (stat.isDirectory()) {
-      var relPath = path.join(dstDir, cut(elem));
-      if (!fs.existsSync(relPath)) fs.mkdirSync(relPath);
-      stack = stack.concat(readdir(elem));
-    } else if (stat.isFile()) {
-      var name = path.basename(elem);
-      var dir  = path.dirname(elem);
-      // replace parts of the name
-      name = changeFilename(name);
-      var relPath = path.join(dstDir, cut(path.join(dir, name)));
-      var content = fs.readFileSync(elem, { encoding: "utf8" });
-      content = mu.render(content, { name: name });
-      fs.writeFileSync(relPath, content);
+  srcDirs.forEach(function(srcDir) {
+    var stack = readdir(srcDir);
+
+    while (stack.length) {
+      var elem = stack.shift();
+      var stat = fs.statSync(elem);
+      if (stat.isDirectory()) {
+        var relPath = path.join(dstDir, cut(elem, srcDir));
+        if (!fs.existsSync(relPath)) fs.mkdirSync(relPath);
+
+        stack = stack.concat(readdir(elem));
+      } else if (stat.isFile()) {
+        var basename = path.basename(elem);
+        var dirname  = path.dirname(elem);
+
+        // replace parts of the name
+        basename = changeFilename(basename);
+
+        var relPath = path.join(dstDir, cut(path.join(dirname, basename), srcDir));
+        var content = fs.readFileSync(elem, { encoding: "utf8" });
+
+        fs.writeFileSync(relPath, mu.render(content, { name: name }));
+      }
     }
-  }
+  });
   callback(null);
 };
 
