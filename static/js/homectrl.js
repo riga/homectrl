@@ -366,7 +366,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
         args.unshift(data);
         data = null;
       }
-      args = ["template", { path: path, data: data || {} }].concat(args);
+      args = ["_template", { path: path, data: data || {} }].concat(args);
       return this.GET.apply(this, args);
     },
 
