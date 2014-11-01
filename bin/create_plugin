@@ -11,13 +11,9 @@ var mu = require("mustache");
 var createCli = require("../lib/util.js").createCli;
 
 
-var render
-var createPlugin = function(name, minimal, callback) {
+var createPlugin = function(name, callback) {
   var dstDir = name;
-  var srcDirs = [];
-
-  srcDirs.push(path.resolve(__dirname, "../plugins/_templates/common"));
-  srcDirs.push(path.resolve(__dirname, "../plugins/_templates", minimal ? "minimal" : "verbose"));
+  var srcDir = path.resolve(__dirname, "../plugins/_template");
 
   var readdir = function(dir) {
     return fs.readdirSync(dir).map(function(elem) {
@@ -25,7 +21,7 @@ var createPlugin = function(name, minimal, callback) {
     });
   };
 
-  var cut = function(elem, srcDir) {
+  var cut = function(elem) {
     return elem.substr(srcDir.length);
   };
 
@@ -41,31 +37,30 @@ var createPlugin = function(name, minimal, callback) {
     return name;
   };
 
-  srcDirs.forEach(function(srcDir) {
-    var stack = readdir(srcDir);
+  var stack = readdir(srcDir);
 
-    while (stack.length) {
-      var elem = stack.shift();
-      var stat = fs.statSync(elem);
-      if (stat.isDirectory()) {
-        var relPath = path.join(dstDir, cut(elem, srcDir));
-        if (!fs.existsSync(relPath)) fs.mkdirSync(relPath);
+  while (stack.length) {
+    var elem = stack.shift();
+    var stat = fs.statSync(elem);
+    if (stat.isDirectory()) {
+      var relPath = path.join(dstDir, cut(elem));
+      if (!fs.existsSync(relPath)) fs.mkdirSync(relPath);
 
-        stack = stack.concat(readdir(elem));
-      } else if (stat.isFile()) {
-        var basename = path.basename(elem);
-        var dirname  = path.dirname(elem);
+      stack = stack.concat(readdir(elem));
+    } else if (stat.isFile()) {
+      var basename = path.basename(elem);
+      var dirname  = path.dirname(elem);
 
-        // replace parts of the name
-        basename = changeFilename(basename);
+      // replace parts of the name
+      basename = changeFilename(basename);
 
-        var relPath = path.join(dstDir, cut(path.join(dirname, basename), srcDir));
-        var content = fs.readFileSync(elem, { encoding: "utf8" });
+      var relPath = path.join(dstDir, cut(path.join(dirname, basename)));
+      var content = fs.readFileSync(elem, { encoding: "utf8" });
 
-        fs.writeFileSync(relPath, mu.render(content, { name: name }));
-      }
+      fs.writeFileSync(relPath, mu.render(content, { name: name }));
     }
-  });
+  }
+
   callback(null);
 };
 
@@ -76,9 +71,6 @@ var args = [
   {
     name: "-n, --name [NAME]",
     desc: "the name of the module"
-  }, {
-    name: "-m, --minimal",
-    desc: "create a minimal plugin"
   }
 ];
 
@@ -98,7 +90,8 @@ if (fs.existsSync(cli.name)) {
 }
 fs.mkdirSync(cli.name);
 
-createPlugin(cli.name, cli.minimal, function(err) {
+// create the plugin
+createPlugin(cli.name, function(err) {
   if (err) throw err;
-  console.log("create plugin", cli.name);
+  console.log("created plugin", cli.name);
 });
