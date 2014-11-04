@@ -30,9 +30,10 @@ fs.readdirSync(samplePath).forEach(function(file) {
 
 // creates symlinks, uses mkdirp if target folders do not exist yet
 var symlink = function(src, dst) {
+  src = path.resolve(src);
+  dst = path.resolve(dst);
   if (fs.existsSync(dst)) return;
-  var dstDir = path.dirname(dst);
-  mkdirp.sync(dstDir);
+  mkdirp.sync(path.dirname(dst));
   fs.symlinkSync(src, dst);
 };
 
@@ -41,7 +42,7 @@ var symlink = function(src, dst) {
 symlink("lib/public.js", "node_modules/homectrl/index.js");
 
 // create symlinks to make files available on client-side
-symlink("node_modules/node-oo/index.js", "static/vendor/class.js");
+symlink("node_modules/jclass/index.js", "static/vendor/jclass.js");
 symlink("node_modules/eventemitter2/lib/eventemitter2.js", "static/vendor/eventemitter2.js");
 
 

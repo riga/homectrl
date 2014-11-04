@@ -12,7 +12,7 @@ module.exports = exports = hc.Plugin._extend({
   // invoked when all components of this plugin are set up
   setup: function() {
     // call the super class' setup method
-    this._super();
+    this.setup._super.call(this);
 
     /*
     the following members are provided:

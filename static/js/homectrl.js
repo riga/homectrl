@@ -7,7 +7,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
   HomeCtrl = Emitter._extend({
 
     init: function() {
-      this._super();
+      this.init._super.call(this);
 
       this.nodes   = {};
       this.socket  = null;
@@ -263,7 +263,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
   Plugin = Emitter._extend({
 
     init: function(name) {
-      this._super({ wildcard: true });
+      this.init._super.call(this, { wildcard: true });
 
       var self = this;
 

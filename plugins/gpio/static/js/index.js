@@ -10,7 +10,7 @@ define(["homectrl"], function(hc) {
   return hc.Plugin._extend({
 
     setup: function() {
-      this._super();
+      this.setup._super.call(this);
 
       var self = this;
 

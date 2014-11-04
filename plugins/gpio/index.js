@@ -14,7 +14,7 @@ var IN   = "in",
 module.exports = hc.Plugin._extend({
 
   setup: function() {
-    this._super();
+    this.setup._super.call(this);
 
     // setup gpios, based on the config file (read automatically)
     this.gpios = {};
