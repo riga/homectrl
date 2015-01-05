@@ -92,9 +92,10 @@ module.exports = hc.Plugin._extend({
     });
 
     this.POST("/resetall", function(req, res) {
-      // set all gpios LOW, the bound events will do the rest
+      // set all gpios OUT and LOW, the bound events will do the rest
 
       Object.keys(self.gpios).forEach(function(num) {
+        self.gpios[num].setDirection(OUT);
         self.gpios[num].set(LOW);
       });
 
