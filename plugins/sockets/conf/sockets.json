@@ -1,0 +1,25 @@
+{
+	"onNum": 3,
+
+	"offNum": 4,
+
+	"switches": [{
+		"num": 14,
+		"label": "A",
+		"descr": "Schlafzimmer"
+	}, {
+		"num": 15,
+		"label": "B",
+		"descr": "Stehlampe"
+	}, {
+		"num": 17,
+		"label": "C",
+		"descr": "Regal"
+	}, {
+		"num": 18,
+		"label": "D",
+		"descr": "Theke"
+	}],
+
+	"delay": 750
+}
