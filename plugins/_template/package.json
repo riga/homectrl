@@ -1,8 +1,8 @@
 {
-    "name": "homectrl-plugin-{{name}}",
-    "preferGlobal": false,
-    "version": "0.0.1",
-    "author": "Your Name <email@provider.tld>",
-    "description": "{{name}} plugin for homectrl (https://github.com/riga/homectrl.git).",
-    "dependencies" : {}
+	"name": "homectrl-plugin-{{name}}",
+	"preferGlobal": false,
+	"version": "0.0.1",
+	"author": "Your Name <email@provider.tld>",
+	"description": "{{name}} plugin for homectrl (https://github.com/riga/homectrl.git).",
+	"dependencies" : {}
 }
