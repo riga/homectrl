@@ -24,7 +24,7 @@ module.exports = hc.Plugin._extend({
     this.setupMessages();
     this.setupRoutes();
 
-    this.logger.info("gpio: setup with gpio numbers", Object.keys(this.gpios).join(", "));
+    this.logger.info("gpio: setup with gpio's", Object.keys(this.gpios).join(", "));
   },
 
   setupGpio: function(num) {
