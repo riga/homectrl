@@ -2,36 +2,36 @@
 
 #content > .plugin#gpio {
 
-    padding: 20px 5px;
+  padding: 20px 5px;
 
-    .row {
-        margin-bottom: 15px;
+  .row {
+    margin-bottom: 15px;
 
-        button {
-            margin-right: 10px;
-        }
-
-        .gpio {
-            padding-bottom: 30px;
-
-            .direction {
-                margin-bottom: 10px;
-            }
-        }
+    button:not(:last-child) {
+      margin-right: 10px;
     }
 
+    .gpio {
+      padding-bottom: 30px;
 
-    .bootstrap-switch {
-        &.bootstrap-switch-focused {
-            box-shadow: none;
-        }
+      .direction {
+        margin-bottom: 10px;
+      }
+    }
+  }
 
-        .bootstrap-switch-container {
-            transition-duration: 0.1s;
-        }
+
+  .bootstrap-switch {
+    &.bootstrap-switch-focused {
+      box-shadow: none;
     }
 
-    button > i.glyphicon {
-        margin-right: 4px;
+    .bootstrap-switch-container {
+      transition-duration: 0.1s;
     }
+  }
+
+  button > i.glyphicon {
+    margin-right: 4px;
+  }
 }

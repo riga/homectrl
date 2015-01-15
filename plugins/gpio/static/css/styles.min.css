@@ -1,3 +1,3 @@
-#content>.plugin#gpio{padding:20px 5px}#content>.plugin#gpio .row{margin-bottom:15px}#content>.plugin#gpio .row button{margin-right:10px}#content>.plugin#gpio .row .gpio{padding-bottom:30px}
-#content>.plugin#gpio .row .gpio .direction{margin-bottom:10px}#content>.plugin#gpio .bootstrap-switch.bootstrap-switch-focused{box-shadow:none}#content>.plugin#gpio .bootstrap-switch .bootstrap-switch-container{transition-duration:.1s}
-#content>.plugin#gpio button>i.glyphicon{margin-right:4px}
+#content>.plugin#gpio{padding:20px 5px}#content>.plugin#gpio .row{margin-bottom:15px}#content>.plugin#gpio .row button:not(:last-child){margin-right:10px}
+#content>.plugin#gpio .row .gpio{padding-bottom:30px}#content>.plugin#gpio .row .gpio .direction{margin-bottom:10px}#content>.plugin#gpio .bootstrap-switch.bootstrap-switch-focused{box-shadow:none}
+#content>.plugin#gpio .bootstrap-switch .bootstrap-switch-container{transition-duration:.1s}#content>.plugin#gpio button>i.glyphicon{margin-right:4px}
