@@ -19,11 +19,13 @@ define(["homectrl", "jquery"], function(hc, $) {
 
       /*
       the following members are provided:
-        name      -> the name of the plugin, i.e. {{name}}
-        label     -> the current label, initially the name
-        iconClass -> the current (full) bootstrap icon class
-        nodes     -> an object containing the nodes $content, $menuItem, $menuItemLabel,
-                     $menuItemIcon and $title
+        name        -> the name of the plugin, i.e. {{name}}
+        dynamicRoot -> dynamic root
+        staticRoot  -> static root
+        label       -> the current label, initially the name
+        iconClass   -> the current (full) bootstrap icon class
+        nodes       -> an object containing the nodes $content, $menuItem, $menuItemLabel,
+                       $menuItemIcon and $title
       */
 
       /*

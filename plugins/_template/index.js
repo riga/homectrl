@@ -19,6 +19,8 @@ module.exports = exports = hc.Plugin._extend({
       logger       -> a winston logger instance
       config       -> an nconf Provider instance that loaded all files in the conf/ dir
       root         -> the root path of this plugin, e.g. /home/pi/homectrl/plugin/{{name}}
+      dynamicRoot  -> the url root of this plugin, e.g. /plugins/{{name}}
+      staticRoot   -> the static url root of this plugin, e.g. /plugins/{{name}}/static
       templateData -> a configurable object holding default template data, the key should be
                       the name of the template to render, e.g. "index.jade": { ... }
     */
