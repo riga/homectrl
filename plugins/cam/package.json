@@ -1,0 +1,8 @@
+{
+	"name": "homectrl-plugin-cam",
+	"preferGlobal": false,
+	"version": "0.0.1",
+	"author": "Your Name <email@provider.tld>",
+	"description": "cam plugin for homectrl (https://github.com/riga/homectrl.git).",
+	"dependencies" : {}
+}

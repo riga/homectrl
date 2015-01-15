@@ -1,0 +1,15 @@
+.container-fluid
+
+  // steering elements
+  .row
+    .col-12.text-center
+      div.btn-group(role="button")
+        button.btn.btn-primary#play(role="button")
+          i.glyphicon.glyphicon-play
+          span  Play
+
+  // stream
+  .row#stream
+    .col-12.text-center
+      video(height="#{height}", width="#{width}", autoplay, poster="#{staticRoot}/img/poster.png")
+        source(src="#{dynamicRoot}/stream", type="video/mp4")
