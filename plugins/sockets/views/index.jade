@@ -1,7 +1,7 @@
 .container-fluid
 
   // steering elements
-  .row
+  .row#steering
     .col-12.text-center
       button.btn.btn-default#all-on(role="button")
         i.glyphicon.glyphicon-check
@@ -16,5 +16,10 @@
     .switch.col-lg-3.col-md-6.col-sm-6.col-xs-12.text-center(data-bind="switch")
       h4(data-bind="label")
       h6(data-bind="descr")
-      div.state
-        input(type="checkbox")
+      div.btn-group(role="button")
+        button.btn.btn-success#on(role="button")
+          i.glyphicon.glyphicon-check
+          span  On
+        button.btn.btn-danger#off(role="button")
+          i.glyphicon.glyphicon-unchecked
+          span  Off

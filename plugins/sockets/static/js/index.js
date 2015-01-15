@@ -16,10 +16,8 @@ define(["homectrl", "jquery"], function(hc, $) {
       this.setIcon("flash");
 
       // load switch data and start
-      this.nodes.switches = [];
       this.GET("/switches", function(res) {
         self.setupUI(res.data, function(err) {
-          self.setupMessages();
           self.setupSwitches(res.data);
         });
       });
@@ -40,13 +38,6 @@ define(["homectrl", "jquery"], function(hc, $) {
 
         // render and setup the bootstrap switches
         self.nodes.$content.html(tmpl).find("#switches").render(data, directives);
-        self.nodes.$content.find(".state input").bootstrapSwitch({
-          onText  : "On",
-          offText : "Off",
-          onColor : "success",
-          offColor: "danger",
-          readonly: false
-        });
 
         // store nodes
         self.nodes.$allOn  = self.nodes.$content.find("#all-on");
@@ -70,39 +61,16 @@ define(["homectrl", "jquery"], function(hc, $) {
       var self = this;
 
       data.forEach(function(_switch, i) {
-        var $switch = self.nodes.$content.find("#switches > .switch#" + i);
-        var $state  = $switch.find(".state input");
-
-        // apply the state
-        $state.bootstrapSwitch("state", _switch.state, true);
+        var $on  = self.nodes.$content.find("#switches > .switch#" + i + " #on");
+        var $off = self.nodes.$content.find("#switches > .switch#" + i + " #off");
 
         // bind switch events
-        $state.on("switchChange.bootstrapSwitch", function(event, state) {
-          $state.bootstrapSwitch("disabled", true);
-          self.emit("out.stateChange", i, state);
+        $on.click(function() {
+          self.emit("out.stateChange", i, true);
         });
-
-        // store nodes
-        self.nodes.switches[i] = {
-          $switch : $switch,
-          $state  : $state
-        };
-      });
-
-      return this;
-    },
-
-    // custom method
-    setupMessages: function() {
-      var self = this;
-
-      this.on("in.stateChange", function(i, state) {
-        var nodes = self.nodes.switches[i];
-        if (!nodes) return;
-
-        // update the switch state and disabled state
-        nodes.$state.bootstrapSwitch("state", state, true);
-        nodes.$state.bootstrapSwitch("disabled", false);
+        $off.click(function() {
+          self.emit("out.stateChange", i, false);
+        });
       });
 
       return this;
