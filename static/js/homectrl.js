@@ -49,6 +49,8 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
       this.nodes.$menuItemHook = this.nodes.$menu.find("#menu-item-hook").first();
       this.nodes.$menuToggle   = this.nodes.$main.find("#page > #header #menu-toggle").first();
       this.nodes.$reload       = this.nodes.$main.find("#page > #header #reload").first();
+      this.nodes.$logout       = this.nodes.$main.find("#page > #header #logout").first();
+      this.nodes.$shutdown     = this.nodes.$main.find("#page > #header #shutdown").first();
       this.nodes.$content      = this.nodes.$main.find("#page > #content").first();
       this.nodes.$blocker      = this.nodes.$main.find("#page > #blocker").first();
       this.nodes.$titleHook    = this.nodes.$main.find("#page > #header #title-hook").first();
@@ -62,6 +64,16 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
       });
       this.nodes.$reload.click(function(event) {
         window.location.reload();
+      });
+      this.nodes.$logout.click(function(event) {
+        if (window.confirm("Do you really want to logout?")) {
+          $.post(window._hcData.root + "logout");
+        }
+      });
+      this.nodes.$shutdown.click(function(event) {
+        if (window.confirm("Do you really want to shutdown?")) {
+          $.post(window._hcData.root + "shutdown");
+        }
       });
       this.nodes.$blocker.click(function(event) {
         event.preventDefault();
@@ -256,6 +268,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
 
       return this;
     }
+
   });
 
 
@@ -268,6 +281,9 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
       var self = this;
 
       this.name  = name;
+
+      this.dynamicRoot = window._hcData.root + "plugins/" + this.name;
+      this.staticRoot  = this.dynamicRoot + "/static";
 
       this.label     = null;
       this.iconClass = null;

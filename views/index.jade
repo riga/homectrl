@@ -38,10 +38,12 @@ html
       div#page
         div#header.label-primary
           div
-            div
-              span
+            div.text-left
+              div.btn-group(role="group")
                 button.btn.btn-primary#menu-toggle(role="button")
                   i.glyphicon.glyphicon-align-justify
+                button.btn.btn-primary#reload(role="button")
+                  i.glyphicon.glyphicon-refresh
 
           div
             div#title-hook
@@ -51,9 +53,11 @@ html
 
           div
             div.text-right
-              span
-                button.btn.btn-primary#reload(role="button")
-                  i.glyphicon.glyphicon-refresh
+              div.btn-group(role="group")
+                button.btn.btn-primary#logout(role="button", title="logout")
+                  i.glyphicon.glyphicon-eject
+                button.btn.btn-primary#shutdown(role="button", title="shutdown")
+                  i.glyphicon.glyphicon-off
 
         div#content
           div.info#About About
