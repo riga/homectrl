@@ -5,3 +5,5 @@ static/vendor/jclass.js
 static/vendor/eventemitter2.js
 *.log
 *.DS_Store
+
+plugins/cam/static/img/cam.png
