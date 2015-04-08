@@ -1,12 +1,11 @@
 // load modules
 var hc    = require("homectrl"),
-    util  = require("util"),
     async = require("async"),
     exec  = require("child_process").exec;
 
 
 // define and export our plugin
-module.exports = exports = hc.Plugin._extend({
+module.exports = hc.Plugin._extend({
 
   // plugin method
   // invoked when all components of this plugin are set up

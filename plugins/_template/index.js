@@ -6,7 +6,7 @@ var hc = require("homectrl");
 
 // define and export our plugin
 // therefore, we extend (i.e. inherit from) the server-side homectrl.Plugin class
-module.exports = exports = hc.Plugin._extend({
+module.exports = hc.Plugin._extend({
 
   // plugin method
   // invoked when all components of this plugin are set up
