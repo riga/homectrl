@@ -1,15 +1,8 @@
 // load modules
 var hc    = require("homectrl"),
     util  = require("util"),
-    GPIO  = require("gpio"),
-    async = require("async");
-
-
-// define some constants derived from the gpio module
-var IN   = "in",
-    OUT  = "out",
-    HIGH = 1,
-    LOW  = 0;
+    async = require("async"),
+    exec  = require("child_process").exec;
 
 
 // define and export our plugin
@@ -20,60 +13,55 @@ module.exports = exports = hc.Plugin._extend({
   setup: function() {
     this.setup._super.call(this);
 
-    // setup gpios
-    this.gpios = {
-      on: this.setupGpio(this.config.get("onNum")),
-      off: this.setupGpio(this.config.get("offNum")),
-      switches: []
-    };
-    this.config.get("switches").forEach(function(data) {
-      this.gpios.switches.push(this.setupGpio(data.num));
-    }, this);
-
     // setup messages and routes
     this.setupMessages();
     this.setupRoutes();
 
-    var logData = this.config.get("switches").map(function(data) {
-      return data.label + "(" + data.num + ")";
+    var logData = this.config.get("sockets").map(function(socket) {
+      return socket.label + "(" + socket.descr + ")";
     });
-    this.logger.info("sockets: setup with on(%s), off(%s), %s",
-      this.config.get("onNum"), this.config.get("offNum"), logData.join(", "));
+    this.logger.info("sockets: %s", logData.join(", "));
   },
 
-  setupGpio: function(num) {
-    var gpio = GPIO.export(num, {
-      direction: OUT,
-      interval: 100,
-      ready: function() {
-        gpio.set(LOW);
-      }
-    });
-
-    return gpio;
-  },
-
-  triggerSwitch: function(i, state, callback) {
+  triggerSocket: function(i, state, callback) {
     var self = this;
 
-    var signalGpio = this.gpios[state ? "on" : "off"];
-    var switchGpio = this.gpios.switches[i];
+    if (callback === undefined) {
+      callback = function(){};
+    }
 
-    if (!signalGpio || !switchGpio) return this;
+    var socket = this.config.get("sockets")[i];
+    if (!socket) {
+      callback("undefined socket " + i);
+      return this;
+    }
 
-    var tasks = function(value) {
-      return [signalGpio, switchGpio].map(function(gpio) {
-        return function(callback) {
-          gpio.set(value, callback.bind(null, null));
-        };
+    var tasks    = [];
+    var cmd      = [this.config.get("command"), socket.code, state ? "1" : "0"].join(" ");
+    var nSignals = this.config.get("nSignals");
+    var timeout  = this.config.get("timeout");
+
+    for (var i = 0; i < nSignals; ++i) {
+      tasks.push(function(callback) {
+        exec(cmd, callback);
       });
-    };
-    async.parallel(tasks(HIGH), function() {
-      setTimeout(function() {
-        async.parallel(tasks(LOW), function() {
-          (callback || function(){})(null);
+      if (i + 1 < nSignals) {
+        tasks.push(function(callback) {
+          setTimeout(callback.bind(null, null), timeout);
         });
-      }, self.config.get("delay"));
+      }
+    }
+
+    async.series(tasks, function(err) {
+      if (err) {
+        self.logger.error(err);
+        return callback(err);
+      }
+
+      self.logger.debug("sockets: switch %s %s(%s)",
+        state ? "on" : "off", socket.label, socket.descr);
+
+      callback(null);
     });
 
     return this;
@@ -84,7 +72,7 @@ module.exports = exports = hc.Plugin._extend({
     var self = this;
 
     this.on("in.stateChange", function(socketId, i, state) {
-      self.triggerSwitch(i, state);
+      self.triggerSocket(i, state);
     });
 
     return this;
@@ -94,36 +82,28 @@ module.exports = exports = hc.Plugin._extend({
   setupRoutes: function() {
     var self = this;
 
-    var switchData = this.config.get("switches");
+    var sockets = this.config.get("sockets");
 
-    var tasks = function(value) {
-      var _tasks = [];
-      switchData.forEach(function(_, i) {
-        _tasks.push(function(callback) {
-          self.triggerSwitch(i, value, callback);
-        });
-
-        if (i < switchData.length - 1) {
-          _tasks.push(function(callback) {
-            setTimeout(callback.bind(null, null), 50);
-          });
+    var allTasks = function(state) {
+      return sockets.map(function(_, i) {
+        return function(callback) {
+          self.triggerSocket(i, state, callback);
         }
       });
-      return _tasks;
     };
 
-    this.GET("/switches", function(req, res) {
-      hc.send(res, switchData);
+    this.GET("/sockets", function(req, res) {
+      hc.send(res, sockets);
     });
 
     this.POST("/allon", function(req, res) {
-      async.series(tasks(true), function() {
+      async.series(allTasks(true), function() {
         hc.send(res);
       });
     });
 
     this.POST("/alloff", function(req, res) {
-      async.series(tasks(false), function() {
+      async.series(allTasks(false), function() {
         hc.send(res);
       });
     });

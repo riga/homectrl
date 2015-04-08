@@ -16,7 +16,7 @@ define(["homectrl", "jquery"], function(hc, $) {
       this.setIcon("flash");
 
       // load switch data and start
-      this.GET("/switches", function(res) {
+      this.GET("/sockets", function(res) {
         self.setupUI(res.data, function(err) {
           self.setupSwitches(res.data);
         });

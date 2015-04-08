@@ -1,25 +1,24 @@
 {
-	"onNum": 3,
+	"command": "/home/pi/raspberry-remote/send",
 
-	"offNum": 4,
-
-	"switches": [{
-		"num": 14,
+	"sockets": [{
+		"code": "10101 1",
 		"label": "A",
 		"descr": "Schlafzimmer"
 	}, {
-		"num": 15,
+		"code": "10101 2",
 		"label": "B",
 		"descr": "Stehlampe"
 	}, {
-		"num": 17,
+		"code": "10101 3",
 		"label": "C",
 		"descr": "Regal"
 	}, {
-		"num": 18,
+		"code": "10101 4",
 		"label": "D",
-		"descr": "Theke"
+		"descr": "Couchtisch"
 	}],
 
-	"delay": 750
+	"nSignals": 2,
+	"timeout" : 500
 }
