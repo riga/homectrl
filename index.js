@@ -1,52 +1,62 @@
 #!/usr/bin/env node
 // index.js
 
-// node modules
-var path = require("path"),
-    fs   = require("fs"),
-    cp   = require("child_process");
+/**
+ * Homectrl startup script that handles config samples,
+ * creation of symlinks and the actual server startup.
+ */
 
-// external modules
+
+// node modules
+var path = require("path");
+var fs   = require("fs");
+var cp   = require("child_process");
+
+// npm modules
 var mkdirp = require("mkdirp");
 
+// local modules
+var util = require("./util");
 
-// copy json config files from samples if not present yet
-var confPath   = "conf";
-var samplePath = path.join(confPath, "samples");
-fs.readdirSync(samplePath).forEach(function(file) {
+
+/**
+ * Create config files from samples.
+ */
+
+var samplesPath = path.join("conf", "samples");
+fs.readdirSync(samplesPath).forEach(function(file) {
   // a json file?
-  if (!/\.json$/.test(file)) {
+  if (!util.isJsonFile(file)) {
     return;
   }
 
-  var src = path.join(samplePath, file);
-  var dst = path.join(confPath,   file);
+  var src = path.join(samplesPath, file);
+  var dst = path.join("conf",      file);
 
+  // copy only if necessary
   if (!fs.existsSync(dst)) {
     fs.writeFileSync(dst, fs.readFileSync(src));
   }
 });
 
 
-// creates symlinks, uses mkdirp if target folders do not exist yet
-var symlink = function(src, dst) {
-  src = path.resolve(src);
-  dst = path.resolve(dst);
-  if (fs.existsSync(dst)) return;
-  mkdirp.sync(path.dirname(dst));
-  fs.symlinkSync(src, dst);
-};
+/**
+ * Create symlinks to simplify imports.
+ */
 
-// create a symlink node_modules/homectrl/index.js -> lib/public.js
-// to be able to require "homectrl" in plugins
-symlink("lib/public.js", "node_modules/homectrl/index.js");
+// create a "fake" node module to be able to require "homectrl" in plugins
+// node_modules/homectrl/index.js -> lib/public.js
+createSymlink("lib/public.js", "node_modules/homectrl/index.js");
 
-// create symlinks to make files available on client-side
-symlink("node_modules/jclass/index.js", "static/vendor/jclass.js");
-symlink("node_modules/eventemitter2/lib/eventemitter2.js", "static/vendor/eventemitter2.js");
+// make certain files available through the static mount point
+createSymlink("node_modules/jclass/index.js", "static/vendor/jclass.js");
+createSymlink("node_modules/eventemitter2/lib/eventemitter2.js", "static/vendor/eventemitter2.js");
 
 
-// finally, fork the actual server
+/**
+ * Start the server.
+ */
+
 var opts = {
   cwd: __dirname,
   env: process.env

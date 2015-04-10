@@ -94,7 +94,7 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
 
       // create host and path, then connect
       var socketHost = window.location.protocol + "//" + window.location.hostname + ":"
-                     + window._hcData.ioPort;
+                     + window._hcData.wsPort;
       var socketPath = window._hcData.root + "socket.io";
       this.socket    = io.connect(socketHost, { path: socketPath });
 

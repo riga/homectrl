@@ -5,7 +5,7 @@
 		"root": "/"
 	},
 
-	"io": {
+	"websocket": {
 		"port": 8081
 	},
 
