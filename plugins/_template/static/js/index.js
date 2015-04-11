@@ -13,9 +13,9 @@ define(["homectrl", "jquery"], function(hc, $) {
 
     // plugin method
     // invoked when all components of this plugin are set up
-    setup: function() {
+    setup: function setup() {
       // call the super class' setup method
-      this.setup._super.call(this);
+      setup._super.call(this);
 
       /*
       the following members are provided:
