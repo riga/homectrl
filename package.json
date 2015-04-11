@@ -37,7 +37,8 @@
 		"temp": "0.8.1",
 		"wrench": "1.5.8",
 		"mustache": "0.8.2",
-		"http-status": "0.1.8"
+		"http-status": "0.1.8",
+		"yamljs": "0.2.1"
 	},
 	"engines": {
 		"node": ">= 0.10"

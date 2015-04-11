@@ -25,17 +25,18 @@ var util = require("./lib/util");
 
 var samplesPath = path.join(__dirname, "conf", "samples");
 fs.readdirSync(samplesPath).forEach(function(file) {
-  // a json file?
-  if (!util.isJsonFile(file)) {
-    return;
-  }
-
   var src = path.join(samplesPath, file);
   var dst = path.join(__dirname, "conf", file);
 
+  // is a config file?
+  var content = util.readConfig(src, false);
+  if (content == null) {
+    return;
+  }
+
   // copy only if necessary
   if (!fs.existsSync(dst)) {
-    fs.writeFileSync(dst, fs.readFileSync(src));
+    fs.writeFileSync(dst, content);
   }
 });
 
