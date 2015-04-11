@@ -22,18 +22,21 @@
 		},
 
 		"transports": {
-			"Console": [{
-				"level": "all",
-				"colorize": true,
-				"handleExceptions": true
-
-			}],
-			"File": [{
-				"level": "all",
-				"colorize": false,
-				"json": false,
-				"handleExceptions": true
-			}]
+			"Console": [
+				{
+					"level": "all",
+					"colorize": true,
+					"handleExceptions": false
+				}
+			],
+			"File": [
+				{
+					"level": "all",
+					"colorize": false,
+					"json": false,
+					"handleExceptions": true
+				}
+			]
 		}
 	}
 }

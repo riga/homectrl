@@ -2,7 +2,7 @@
 // index.js
 
 /**
- * Homectrl startup script that handles config samples,
+ * homectrl startup script that handles config samples,
  * creation of symlinks and the actual server startup.
  */
 
@@ -16,7 +16,7 @@ var cp   = require("child_process");
 var mkdirp = require("mkdirp");
 
 // local modules
-var util = require("./util");
+var util = require("./lib/util");
 
 
 /**
@@ -46,11 +46,12 @@ fs.readdirSync(samplesPath).forEach(function(file) {
 
 // create a "fake" node module to be able to require "homectrl" in plugins
 // node_modules/homectrl/index.js -> lib/public.js
-createSymlink("lib/public.js", "node_modules/homectrl/index.js");
+util.createSymlink("lib/public.js", "node_modules/homectrl/index.js");
 
 // make certain files available through the static mount point
-createSymlink("node_modules/jclass/index.js", "static/vendor/jclass.js");
-createSymlink("node_modules/eventemitter2/lib/eventemitter2.js", "static/vendor/eventemitter2.js");
+util.createSymlink("node_modules/jclass/index.js", "static/vendor/jclass.js");
+util.createSymlink("node_modules/eventemitter2/lib/eventemitter2.js",
+                   "static/vendor/eventemitter2.js");
 
 
 /**
