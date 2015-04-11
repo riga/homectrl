@@ -23,7 +23,7 @@ var util = require("./lib/util");
  * Create config files from samples.
  */
 
-var samplesPath = path.join("conf", "samples");
+var samplesPath = path.join(__dirname, "conf", "samples");
 fs.readdirSync(samplesPath).forEach(function(file) {
   // a json file?
   if (!util.isJsonFile(file)) {
@@ -31,7 +31,7 @@ fs.readdirSync(samplesPath).forEach(function(file) {
   }
 
   var src = path.join(samplesPath, file);
-  var dst = path.join("conf",      file);
+  var dst = path.join(__dirname, "conf", file);
 
   // copy only if necessary
   if (!fs.existsSync(dst)) {
