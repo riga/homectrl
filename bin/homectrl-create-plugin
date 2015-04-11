@@ -1,0 +1,140 @@
+#!/usr/bin/env node
+// bin/homectrl-create-plugin
+
+/**
+ * This script creates a new plugin based on a template located in
+ * plugins/_template. The name of the new plugin in inserted at
+ * multiple places using mustache.
+ */
+
+
+// node modules
+var fs   = require("fs");
+var path = require("path");
+
+// npm modules
+var cli = require("commander");
+var mu  = require("mustache");
+
+
+/**
+ * Creates the new plugin in the current directory.
+ *
+ * @param {string} name - The plugin name.
+ * @param {function} callback - A function called when done.
+ */
+var createPlugin = function(name, callback) {
+  var dstDir = name;
+  var srcDir = path.resolve(__dirname, "../plugins/_template");
+
+
+  /**
+   * Helper functions
+   */
+
+  // synchronously reads the contents of a directory but returns full paths
+  // (in contrast to fs.readdirSync)
+  var readdir = function(dir) {
+    return fs.readdirSync(dir).map(function(elem) {
+      return path.join(dir, elem);
+    });
+  };
+
+  // cuts srcDir from the beginning of a path
+  var cut = function(path) {
+    return path.substr(srcDir.length);
+  };
+
+
+  /**
+   * Check target directory.
+   */
+
+  // does the target directory already exist?
+  if (fs.existsSync(dstDir)) {
+    return callback("the directory '" + dstDir + "' already exists");
+  }
+
+  // create the directory
+  fs.mkdirSync(dstDir);
+
+
+  /**
+   * Copy and update files.
+   */
+
+  // create a shallow list of files and direcories to copy
+  // this list will be updated for every directory during the recursion
+  var stack = readdir(srcDir);
+
+  // start the recursion
+  while (stack.length) {
+    var elem = stack.shift();
+    var stat = fs.statSync(elem);
+
+    // directory of file?
+    if (stat.isDirectory()) {
+      var relPath = path.join(dstDir, cut(elem));
+
+      // create the target representation if necessary
+      if (!fs.existsSync(relPath)) {
+        fs.mkdirSync(relPath);
+      }
+
+      // update the stack
+      stack = stack.concat(readdir(elem));
+
+    } else if (stat.isFile()) {
+      var basename = path.basename(elem);
+      var dirname  = path.dirname(elem);
+
+      var relPath = path.join(dstDir, cut(path.join(dirname, basename)));
+
+      // read the files content and create its rendered target representation
+      var content = fs.readFileSync(elem, { encoding: "utf8" });
+      fs.writeFileSync(relPath, mu.render(content, { name: name }));
+    }
+  }
+
+
+  /**
+   * Callback.
+   */
+
+  callback(null);
+};
+
+
+
+/**
+ * CLI definition.
+ */
+
+cli._name = "homectrl-create-plugin";
+cli.version(JSON.parse(fs.readFileSync(path.join(__dirname, "../package.json"))).version);
+cli.description("Creates a new homectrl plugin in the current directory.");
+
+cli.usage("NAME");
+
+cli.parse(process.argv);
+
+
+// name is required
+if (cli.args.length < 1) {
+  console.log("a plugin name is required, type '%s --help' for more info", cli._name);
+  process.exit(1);
+}
+
+var pluginName = cli.args[0];
+
+
+// create the plugin
+createPlugin(pluginName, function(err) {
+  if (err) {
+    console.error(String(err));
+    process.exit(1);
+  }
+
+  console.log("created plugin '%s'", pluginName);
+  process.exit(0);
+});
