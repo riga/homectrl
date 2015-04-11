@@ -27,7 +27,7 @@ define(["homectrl", "jquery"], function(hc, $) {
       var self = this;
 
       // load the template
-      this.getTemplate("index.jade", function(tmpl) {
+      this.getTemplate("index.jade").done(function(tmpl) {
         var directives = {
           "switch": {
             action: function(data) {

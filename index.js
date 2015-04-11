@@ -19,14 +19,22 @@ var mkdirp = require("mkdirp");
 var util = require("./lib/util");
 
 
+
+/**
+ * Change into the project directory.
+ */
+
+process.chdir(__dirname);
+
+
 /**
  * Create config files from samples.
  */
 
-var samplesPath = path.join(__dirname, "conf", "samples");
+var samplesPath = path.join("conf", "samples");
 fs.readdirSync(samplesPath).forEach(function(file) {
   var src = path.join(samplesPath, file);
-  var dst = path.join(__dirname, "conf", file);
+  var dst = path.join("conf", file);
 
   // is a config file?
   var content = util.readConfig(src, false);
