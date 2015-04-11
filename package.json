@@ -22,7 +22,7 @@
 		"socket.io": "1.1.0",
 		"jclass": "1.1.3",
 		"eventemitter2": "0.4.14",
-		"commander": "2.7.1",
+		"argparse": "1.0.2",
 		"winston": "0.8.1",
 		"nconf": "0.6.9",
 		"jade": "1.7.0",

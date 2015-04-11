@@ -13,8 +13,11 @@ var fs   = require("fs");
 var path = require("path");
 
 // npm modules
-var cli = require("commander");
-var mu  = require("mustache");
+var mu             = require("mustache");
+var ArgumentParser = require("argparse").ArgumentParser;
+
+// local modules
+var util = require("../lib/util");
 
 
 /**
@@ -107,25 +110,18 @@ var createPlugin = function(name, callback) {
 
 
 /**
- * CLI definition.
+ * Setup an ArgumentParser.
  */
 
-cli._name = "homectrl-create-plugin";
-cli.version(JSON.parse(fs.readFileSync(path.join(__dirname, "../package.json"))).version);
-cli.description("Creates a new homectrl plugin in the current directory.");
+var parser = new ArgumentParser({
+  description: "Creates a new homectrl plugin in the current directory.",
+  version    : util.readConfig(path.join(__dirname, "../package.json")).version
+});
 
-cli.usage("NAME");
+parser.addArgument(["name"], { help: "the name of the plugin" });
 
-cli.parse(process.argv);
-
-
-// name is required
-if (cli.args.length < 1) {
-  console.log("a plugin name is required, type '%s --help' for more info", cli._name);
-  process.exit(1);
-}
-
-var pluginName = cli.args[0];
+var args = parser.parseArgs();
+var pluginName = args.name;
 
 
 // create the plugin
