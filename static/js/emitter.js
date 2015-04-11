@@ -1,5 +1,10 @@
-define(["vendor/jclass", "vendor/eventemitter2"], function(Class, EventEmitter2) {
-  // use jclass' Class conversion functionality to create an (Event)Emitter
-  // in jclass style
-  return Class._convert(EventEmitter2);
+// static/emitter.js
+
+/**
+ * jclass based EventEmitter2.
+ */
+
+
+define(["vendor/jclass", "vendor/eventemitter2"], function(JClass, EventEmitter2) {
+  return JClass._convert(EventEmitter2);
 });

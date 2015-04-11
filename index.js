@@ -52,6 +52,7 @@ util.createSymlink("lib/public.js", "node_modules/homectrl/index.js");
 util.createSymlink("node_modules/jclass/index.js", "static/vendor/jclass.js");
 util.createSymlink("node_modules/eventemitter2/lib/eventemitter2.js",
                    "static/vendor/eventemitter2.js");
+util.createSymlink("node_modules/async/lib/async.js", "static/vendor/async.js");
 
 
 /**

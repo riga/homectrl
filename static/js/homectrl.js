@@ -1,49 +1,101 @@
-define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, Transparency) {
+// static/homectrl.js
 
-  var HomeCtrl, Plugin, homectrl;
+/**
+ * This module defines the main homectrl objects
+ * and should be required by plugins for accessing them. 
+ */
 
 
-  // the global HomeCtrl class
-  HomeCtrl = Emitter._extend({
+define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, async) {
 
-    init: function() {
-      this.init._super.call(this);
+  var homectrl, Plugin;
 
-      this.nodes   = {};
-      this.socket  = null;
+
+  /**
+   * homectrl main class definition.
+   */
+
+  var HomeCtrl = Emitter._extend({
+
+    /**
+     * Constructor.
+     */
+    init: function init() {
+      init._super.call(this);
+
+      var self = this;
+
+
+      /**
+       * Instance members.
+       */
+
+      // dynamic and static root
+      this.dynamicRoot = window.hcData.dynamicRoot;
+      this.staticRoot  = window.hcData.staticRoot;
+
+      // jQuery DOM nodes
+      this.nodes = {};
+
+      // websocket connection
+      this.socket = null;
+
+      // plugins
       this.plugins = {};
 
       // state variables
       this.menuOpen        = false;
       this.currentViewName = null;
 
-      // store the pluginNames given in the template data
-      this.pluginNames = window._hcData.plugins;
-    },
+      // store plugin names
+      this.pluginNames = window.hcData.plugins;
 
-    setup: function() {
-      var self = this;
 
-      this.setupUI();
-      this.setupSocket(function() {
-        self.setupPlugins(function() {
-          // initially, apply the first hash
-          self.applyHash();
-        });
+      /**
+       * Setup.
+       */
+
+      var setupQueue = [];
+
+      // user interface
+      setupQueue.push(this.setupUI.bind(this));
+
+      // websocket connection
+      setupQueue.push(this.setupSocket.bind(this));
+
+      // plugins
+      setupQueue.push(this.setupPlugins.bind(this));
+
+      // process the queue
+      async.series(setupQueue, function(err) {
+        if (err) {
+          throw err;
+        }
+
+        // initially, apply the first hash
+        self.applyHash();
       });
-
-      return this;
     },
 
-    setupUI: function() {
+
+    /**
+     * Sets up the user interface, i.e. nodes and events.
+     *
+     * @param {function} callback - A function called when done.
+     * @returns {this}
+     */
+    setupUI: function(callback) {
       var self = this;
 
-      // only use data-bind attributes for transparency rendering
-      Transparency.matcher = function(element, key) {
-        return element.el.getAttribute("data-bind") == key;
-      };
+      if (callback === undefined) {
+        callback = function(){};
+      }
 
-      // store nodes
+
+      /**
+       * Find and store jQuery DOM nodes.
+       */
+
       this.nodes.$main         = $("#homectrl").first();
       this.nodes.$menu         = this.nodes.$main.find("#menu").first();
       this.nodes.$menuItemHook = this.nodes.$menu.find("#menu-item-hook").first();
@@ -55,356 +107,594 @@ define(["jquery", "io", "emitter", "jqTransparency"], function($, io, Emitter, T
       this.nodes.$blocker      = this.nodes.$main.find("#page > #blocker").first();
       this.nodes.$titleHook    = this.nodes.$main.find("#page > #header #title-hook").first();
 
-      // react to hash changes
-      $(window).on("hashchange", this.applyHash.bind(this));
 
-      // bind events
+      /**
+       * Bind events.
+       */
+
+      // menu toggle button
       this.nodes.$menuToggle.click(function(event) {
         self.toggleMenu();
       });
+
+      // reload button
       this.nodes.$reload.click(function(event) {
         window.location.reload();
       });
+
+      // logout button
       this.nodes.$logout.click(function(event) {
         if (window.confirm("Do you really want to logout?")) {
-          $.post(window._hcData.root + "logout");
+          $.post(self.dynamicRoot + "/logout");
         }
       });
+
+      // shutdown button
       this.nodes.$shutdown.click(function(event) {
         if (window.confirm("Do you really want to shutdown?")) {
-          $.post(window._hcData.root + "shutdown");
+          $.post(self.dynamicRoot + "/shutdown");
         }
       });
+
+      // clicks in the blocker
       this.nodes.$blocker.click(function(event) {
         event.preventDefault();
         self.toggleMenu(false);
       });
+
+      // clicks in menu items
       $("#menu > ul > li > a").click(function(event) {
         self.toggleMenu(false);
       });
 
+      // react to hash changes
+      $(window).on("hashchange", this.applyHash.bind(this));
+
+
+      /**
+       * Final actions.
+       */
+
       // hide the splashscreen
       $("#splashscreen").hide();
+
+      // callback
+      callback(null);
+
 
       return this;
     },
 
+
+    /**
+     * Sets up the websocket connection.
+     *
+     * @param {function} callback - A function called when done.
+     * @returns {this}
+     */
     setupSocket: function(callback) {
       var self = this;
 
-      // create host and path, then connect
-      var socketHost = window.location.protocol + "//" + window.location.hostname + ":"
-                     + window._hcData.wsPort;
-      var socketPath = window._hcData.root + "socket.io";
-      this.socket    = io.connect(socketHost, { path: socketPath });
+      if (callback === undefined) {
+        callback = function(){};
+      }
 
-      // store the socketId in a cookie so that it is send in ech http request
+      // build up the connection
+      var wsHost  = window.location.protocol + "//" + window.location.hostname + ":"
+                  + window.hcData.wsPort;
+      this.socket = io.connect(wsHost, { path: window.hcData.wsRoot });
+
+      // store the socket id in a cookie so that it is sent in each http request
       this.socket.on("id", function(id) {
         $.cookie("socketId", id);
       });
 
       // handle incomming plugin messages
       this.socket.on("message.plugin", function(pluginName, topic) {
-        var p = self.getPlugin(pluginName);
-        if (!(p instanceof Plugin)) return;
+        var p = self.plugins[pluginName];
 
-        // prepend "in.<topic>" to mark the message as incomming
+        if (!(p instanceof Plugin)) {
+          return;
+        }
+
         var args = Array.prototype.slice.call(arguments, 2);
+
+        // prepend "in.<topic>" to mark the message as _incomming_
         args.unshift("in." + topic);
 
+        // send
         p.emit.apply(p, args);
       });
 
-      this.socket.on("connect", callback || function(){});
+      this.socket.on("connect", callback);
+
 
       return this;
     },
 
+
+    /**
+     * Sets up all plugins.
+     *
+     * @param {function} callback - A function called when done.
+     * @returns {this}
+     */
     setupPlugins: function(callback) {
       var self = this;
 
-      // html templates
-      var menuItemTmpl = "<li class='plugin'><a><i></i> <span></span></a></li>";
-      var contentTmpl  = "<div class='plugin'></div>";
-      var titleTmpl    = "<span class='plugin'><i></i> <span></span></span>";
+      if (callback === undefined) {
+        callback = function(){};
+      }
 
-      // create plugin modules and require them
+
+      // create plugin module names for requirejs
       var pluginModules = this.pluginNames.map(function(name) {
         return "plugins/" + name + "/index";
       });
 
       // require plugins in parallel
       require(pluginModules, function() {
-        Array.prototype.slice.call(arguments).forEach(function(Cls, i) {
+        var classes = Array.prototype.slice.call(arguments);
+
+        for (var i in classes) {
+          var Cls  = classes[i];
           var name = self.pluginNames[i];
 
-          if (!Cls._extends || !Cls._extends(Plugin)) {
-            console.error("plugin '%s' does not return a homectrl.Plugin", name);
-            return;
-          };
+          // create and store a new plugin instance
+          self.plugins[name] = new Cls(name);
+        }
 
-          // create a new instance of the class and store it
-          var p = new Cls(name);
-          self.plugins[name] = p;
-
-          // setup the content node
-          p.nodes.$content = $(contentTmpl)
-            .appendTo($("#content"))
-            .attr("id", name);
-
-          // add the menu item before the divider and store nodes
-          p.nodes.$menuItem = $(menuItemTmpl)
-            .insertBefore(self.nodes.$menuItemHook)
-            .attr("id", name);
-          p.nodes.$menuItemLabel = p.nodes.$menuItem.find("a > span");
-          p.nodes.$menuItemIcon  = p.nodes.$menuItem.find("a > i");
-
-          // title node
-          p.nodes.$title = $(titleTmpl)
-            .appendTo(self.nodes.$titleHook)
-            .attr("id", name);
-
-          // menu event
-          p.nodes.$menuItem.find("a").click(function(event) {
-            self.toggleMenu(false);
-          });
-
-          // manipulate the menu item
-          p.nodes.$menuItem.find("a").attr("href", "#" + name);
-          p.setLabel(name);
-          p.setIcon("chevron-right");
-
-          p.setup();
-        });
-
-        (callback || function(){})();
+        // finally, call the callback
+        callback(null);
       });
 
+
       return this;
     },
 
-    getPlugin: function(name) {
-      return this.plugins[name] || null;
-    },
 
+    /**
+     * Action that handles hash changes. This is important for view changes.
+     *
+     * @returns {this}
+     */
     applyHash: function() {
-      // takes the hash from the url and updates the view
-      var hash = window.location.hash.substr(1);
-      if (!hash) {
-        if (this.pluginNames.length) hash = this.pluginNames[0];
-        else return this;
+      // take the hash from the url
+      var hash = window.location.hash;
+
+      // get the view name
+      var viewName = hash.substr(1);
+
+      // when there is no hash/viewName, use the first plugin name
+      if (!viewName) {
+        if (this.pluginNames.length) {
+          viewName = this.pluginNames[0];
+        } else {
+          return this;
+        }
       }
 
-      this.showView(hash);
+      // show the respective view
+      this.showView(viewName);
+
 
       return this;
     },
 
+
+    /**
+     * Show a specific view. This might be an internal page, such as the #about page,
+     * or a plugin. This does not change the hash.
+     *
+     * @param {string} viewName - The name of the view.
+     * @returns {this}
+     */
     showView: function(viewName) {
       // do nothing when there's no view change
-      if (!viewName || viewName == this.currentViewName) return this;
+      if (!viewName || viewName == this.currentViewName) {
+        return this;
+      }
 
+      // hide the current view first
       this.hideCurrentView();
 
-      var selector = "#" + viewName;
+      // create the hash
+      var hash = "#" + viewName;
 
       // a plugin?
       if (~this.pluginNames.indexOf(viewName)) {
-        var p = this.getPlugin(viewName);
-        if (!(p instanceof Plugin)) return this;
+        var p = this.plugins[viewName];
+
+        if (!(p instanceof Plugin)) {
+          return this;
+        }
+
+        // update hash
+        hash += ".plugin#" + viewName;
+
+        // call its onShow method
         p.onShow();
-        selector += ".plugin#" + viewName;
       }
 
       // show content, update menu entry and title
-      this.nodes.$content.find(selector).show();
-      this.nodes.$menu.find(selector).toggleClass("active", true);
-      this.nodes.$titleHook.find(selector).show();
+      this.nodes.$content.find(hash).show();
+      this.nodes.$menu.find(hash).toggleClass("active", true);
+      this.nodes.$titleHook.find(hash).show();
 
       // update the global title tag
       $("head > title").html("homectrl - " + viewName);
 
+      // set the current view name
       this.currentViewName = viewName;
+
 
       return this;
     },
 
-    hideCurrentView: function() {
-      if (!this.currentViewName) return this;
 
-      var selector = "#" + this.currentViewName;
+    /**
+     * Hides the current view (if any). This does not change the hash.
+     *
+     * @returns {this};
+     */
+    hideCurrentView: function() {
+      if (!this.currentViewName) {
+        return this;
+      }
+
+      var hash = "#" + this.currentViewName;
 
       // a plugin?
       if (~this.pluginNames.indexOf(this.currentViewName)) {
-        var p = this.getPlugin(this.currentViewName);
-        if (p instanceof Plugin) p.onHide();
-        selector += ".plugin";
+        var p = this.plugins[this.currentViewName];
+        if (p) {
+          p.onHide();
+        }
+
+        // update the hash
+        hash += ".plugin";
       }
 
       // hide content, update meny entry and title
-      this.nodes.$content.find(selector).hide();
-      this.nodes.$menu.find(selector).toggleClass("active", false);
-      this.nodes.$titleHook.find(selector).hide();
+      this.nodes.$content.find(hash).hide();
+      this.nodes.$menu.find(hash).toggleClass("active", false);
+      this.nodes.$titleHook.find(hash).hide();
 
       // update the global title tag
       $("head > title").html("homectrl");
 
+      // finally, reset the current view name and the current hash
       this.currentViewName = null;
+
 
       return this;
     },
 
-    toggleMenu: function(desired) {
-      if (typeof desired == "boolean" && desired == this.menuOpen) {
-        // no change => nothing happens
+
+    /**
+     * Toggle the menu.
+     *
+     * @param {boolean} [state] - If set, `state` determines whether the menu should be shown or
+     *   hidden. Otherwise, the menu is toggled.
+     * @returns {this}
+     */
+    toggleMenu: function(state) {
+      if (state !== undefined) {
+        // convert truthy to boolean
+        state = !!state;
+      }
+
+      // change?
+      if (state == this.menuOpen) {
+        // nothing happens
         return this;
       }
 
       this.menuOpen = !this.menuOpen;
 
       // simply add or remove the menu-open class,
-      // all style changes are css-based
+      // all changes are css-based
       this.nodes.$main.toggleClass("menu-open", this.menuOpen);
+
 
       return this;
     }
-
   });
 
+  
+  /**
+   * Prepare exports.
+   */
 
-  // the client-side Plugin class that should be extended by plugins
+  var exports = {};
+
+
+  /**
+   * Plugin class definition.
+   */
+
   Plugin = Emitter._extend({
 
-    init: function(name) {
-      this.init._super.call(this, { wildcard: true });
+    /**
+     * Constructor. Plugins should use the setup method rather than this constructor to process
+     * custom setup actions.
+     *
+     * @param {string} name - The plugin name.
+     */
+    init: function init(name) {
+      init._super.call(this, { wildcard: true });
 
       var self = this;
 
-      this.name  = name;
 
-      this.dynamicRoot = window._hcData.root + "plugins/" + this.name;
-      this.staticRoot  = this.dynamicRoot + "/static";
+      /**
+       * Instace members.
+       */
 
-      this.label     = null;
-      this.iconClass = null;
+      // plugin name
+      this.name = name;
 
+      // dynamic and static root
+      this.dynamicRoot = window.hcData.dynamicRoot + "plugins/" + name + "/";
+      this.staticRoot  = this.dynamicRoot + "static/";
+
+      // store the current label and icon class
+      this._label     = null;
+      this._iconClass = null;
+
+      // jQuery DOM nodes
       this.nodes = {
-        $content      : null,
-        $menuItem     : null,
-        $menuItemLabel: null,
-        $menuItemIcon : null,
-        $title        : null
+        $content : null,
+        $title   : null,
+        $menuItem: null
       };
 
-      // catch and adjust emitted outgoing messages
-      this.on("out.*", function() {
-        var args  = Array.prototype.slice.call(arguments);
-        var event = this.event.split(".");
 
+      /**
+       * Message handling
+       */
+
+      // catch and adjust emitted _outgoing_ messages
+      this.on("out.*", function() {
+        var event = this.event.split(".");
+        var args  = Array.prototype.slice.call(arguments);
+
+        // prepend the message topic ("message.plugin"), the plugin name,
+        // and the actual event to the arguments
         args = ["message.plugin", self.name, event[1]].concat(args);
 
+        // send
         homectrl.socket.emit.apply(homectrl.socket, args);
       });
+
+
+      /**
+       * User interface.
+       */
+
+      // html templates
+      var menuItemTmpl = "<li class='plugin'><a><i></i> <span></span></a></li>";
+      var contentTmpl  = "<div class='plugin'></div>";
+      var titleTmpl    = "<span class='plugin'><i></i> <span></span></span>";
+
+      // setup the content node
+      self.nodes.$content = $(contentTmpl)
+      .appendTo($("#content"))
+      .attr("id", name);
+
+      // add the menu item before the divider
+      self.nodes.$menuItem = $(menuItemTmpl)
+      .insertBefore(homectrl.nodes.$menuItemHook)
+      .attr("id", name);
+
+      // adjust the href attribute
+      self.nodes.$menuItem.find("a").attr("href", "#" + name);
+
+      // title node
+      self.nodes.$title = $(titleTmpl)
+      .appendTo(homectrl.nodes.$titleHook)
+      .attr("id", name);
+
+      // menu event
+      self.nodes.$menuItem.find("a").click(function(event) {
+        homectrl.toggleMenu(false);
+      });
+
+
+      // at the moment, all constructor actions are synchronous
+      // so simply call the setup method here
+      self.setup();
     },
 
+
+    /**
+     * Sets up the plugin. The constructor is called by the main homectrl instance, then, UI
+     * components are (asynchronously) loaded. After that, the setup method is called.
+     *
+     * @returns {this}
+     */
     setup: function() {
-      // initially, use the name as our label and an empty icon class
+      // initially, use the name as label and an empty icon class
       this.setLabel(this.name);
       this.setIcon("none");
+
       return this;
     },
 
+
+    /**
+     * Adds a link tag for a css file to the page head.
+     *
+     * @param {string} file - The name of a css file relative to the plugins "static/css" directory.
+     * @returns {this}
+     */
+    addCss: function(file) {
+      // append a css file ref to the global head tag
+      // the file will be relative to /static/css
+      $("<link>")
+      .attr("rel", "stylesheet")
+      .attr("href", this.staticRoot + "css/" + file)
+      .appendTo("head");
+
+      return this;
+    },
+
+
+    /**
+     * Sets the plugin label in the UI.
+     *
+     * @param {string} label - A new label.
+     * @returns {this}
+     */
     setLabel: function(label) {
-      this.label = label;
+      this._label = label;
+
+      // set the label in the title node
       if (this.nodes.$title) {
         this.nodes.$title.find("span").text(label);
       }
-      if (this.nodes.$menuItemLabel) {
-        this.nodes.$menuItemLabel.html(label);
+
+      // set the label in the menu entry
+      if (this.nodes.$menuItem) {
+        this.nodes.$menuItem.find("a > span").html(label);
       }
+
       return this;
     },
 
+
+    /**
+     * Sets the icon class in the UI.
+     *
+     * @param {string} iconClass - A new icon class. At the moment, only bootstrap icons are
+     *   supported. If `iconClass` does not start with "glyphicon glyphicon-", it gets prepended.
+     * @returns {this}
+     */
     setIcon: function(iconClass) {
       // ensure a bootstrap conform icon class
       if (!/^glyphicon\ glyphicon\-/.test(iconClass)) {
         iconClass = "glyphicon glyphicon-" + iconClass;
       }
-      this.iconClass = iconClass;
+
+      this._iconClass = iconClass;
+
+      // set the icon class in the title node
       if (this.nodes.$title) {
         this.nodes.$title.find("i").attr("class", iconClass);
       }
-      if (this.nodes.$menuItemIcon) {
-        this.nodes.$menuItemIcon.attr("class", iconClass);
+
+      // set the icon class in the menu entry
+      if (this.nodes.$menuItem) {
+        this.nodes.$menuItem.find("a > i").attr("class", iconClass);
       }
+
       return this;
     },
 
-    addCss: function(file) {
-      // append a css file ref to the global head tag
-      // the file will be relative to /static/css
-      $("<link rel='stylesheet'></link>")
-        .attr("href", window._hcData.root + "plugins/" + this.name + "/static/css/" + file)
-        .appendTo("head");
-      return this;
-    },
 
-    _resolve: function(method, path) {
-      // creates functions that invoke http requests,
-      // might not be used by plugins directly
+    /**
+     * General helper method for ajax requests.
+     *
+     * @param {string} method - The http method to use, e.g. "get" or "post".
+     * @param {string} path - The path to query, relative to the plugins dynamic root.
+     * @param {...} arguments - Arguments to be passed to the appropriate jQuery ajax call.
+     * @returns {jqXHR}
+     */
+    ajax: function(method, path) {
       var args = Array.prototype.slice.call(arguments, 2);
-      if (path.substr(0, 1) == "/") {
+
+      // cut any leading slash
+      if (path[0] == "/") {
         path = path.substr(1);
       }
-      path = window._hcData.root + "plugins/" + this.name + "/" + path;
-      args.unshift(path);
-      return $[method].apply($, args);
+
+      args.unshift(this.dynamicRoot + path);
+
+      return $[method.toLowerCase()].apply($, args);
     },
 
+
+    /**
+     * Wrapper around `ajax` for GET requests.
+     *
+     * @returns {jqXHR}
+     */
     GET: function() {
-      // invoke a GET request
       var args = Array.prototype.slice.call(arguments);
+
+      // prepend the method
       args.unshift("get");
-      return this._resolve.apply(this, args);
+
+      return this.ajax.apply(this, args);
     },
 
+    /**
+     * Wrapper around `ajax` for POST requests.
+     *
+     * @returns {jqXHR}
+     */
     POST: function() {
-      // invoke a POST request
       var args = Array.prototype.slice.call(arguments);
+
+      // prepend the method
       args.unshift("post");
+
       return this._resolve.apply(this, args);
     },
 
+
+    /**
+     * Get a jade template via a GET request.
+     *
+     * @param {string} path - The path of the template relative to the "views" directory.
+     * @param {object} [data=null] - Data for template rendering. Server-side configurable template
+     *   data and some default values are available as well.
+     * @returns {jqXHR}
+     */
     getTemplate: function(path, data) {
-      // return a jade-rendered template
       var args = Array.prototype.slice.call(arguments, 2);
-      if (typeof data === "function") {
-        args.unshift(data);
+
+      if (data === undefined) {
         data = null;
       }
-      args = ["_template", { path: path, data: data || {} }].concat(args);
+
+      // prepend the proper GET resource ("_template") and the request object 
+      args = ["_template", { path: path, data: null }].concat(args);
+
       return this.GET.apply(this, args);
     },
 
+
+    /**
+     * Method called when the plugin is shown.
+     *
+     * @returns {this}
+     */
     onShow: function() {
-      // called when the plugin is shown
       return this;
     },
 
+
+    /**
+     * Method called when the plugin is hidden.
+     *
+     * @returns {this}
+     */
     onHide: function() {
-      // called when the plugin is hidden
       return this;
     }
-
   });
 
 
-  homectrl = new HomeCtrl();
-  homectrl.setup();
+  /**
+   * Create the homctrl instance.
+   */
+
+  window.homectrl = homectrl = new HomeCtrl();
+
+  // store the plugin class
+  homectrl.Plugin = Plugin;
 
 
-  return {
-    homectrl: homectrl,
-    Plugin  : Plugin
-  }
+  return homectrl;
 });

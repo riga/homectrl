@@ -1,6 +1,16 @@
-// define paths used by requirejs
+// static/main.js
+
+/**
+ * This file is the data-main target of the requirejs script tag.
+ */
+
+
+/**
+ * Define requirejs paths.
+ */
+
 var paths = {
-  vendor        : "../vendor",
+  vendor        : "../vendor/",
   jquery        : "../vendor/jquery-2.1.1.min",
   jqCookie      : "../vendor/jquery.cookie-1.4.1.min",
   jqTransparency: "../vendor/jquery.transparency-0.10.0.min",
@@ -9,8 +19,8 @@ var paths = {
   io            : "../vendor/socket.io-1.1.0.min"
 };
 
-// exchange some module paths in case CDN's should be used
-if (window._hcData.useCdn) {
+// change some paths in case CDN's are used
+if (window.hcData.useCdn) {
   paths.jquery    = "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min";
   paths.jqCookie  = "//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min";
   paths.bootstrap = "//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min";
@@ -18,22 +28,30 @@ if (window._hcData.useCdn) {
 }
 
 // add plugins paths (/static/js) as "plugins/<name>"
-window._hcData.plugins.forEach(function(name) {
-  paths["plugins/" + name] = "../../plugins/" + name + "/static/js";
+window.hcData.plugins.forEach(function(name) {
+  paths["plugins/" + name] = "/plugins/" + name + "/static/js";
 });
 
-// actually configurate requirejs
+
+/**
+ * Configure requirejs.
+ */
+
 require.config({
-  baseUrl: window._hcData.root + "static/js",
-  paths: paths,
-  shim: {
-    jqCookie      : ["jquery"],
-    jqTransparency: ["jquery"],
-    bootstrap     : ["jquery"],
-    bsSwitch      : ["bootstrap"],
-    homectrl      : ["jqCookie", "jqTransparency", "bsSwitch"]
+  baseUrl: window.hcData.staticRoot + "js/",
+  paths  : paths,
+  shim   : {
+    jqCookie      : [ "jquery" ],
+    jqTransparency: [ "jquery" ],
+    bootstrap     : [ "jquery" ],
+    bsSwitch      : [ "bootstrap" ],
+    homectrl      : [ "jqCookie", "jqTransparency", "bsSwitch" ]
   }
 });
 
-// start the app by loading homectrl
+
+/**
+ * Start homectrl.
+ */
+
 require(["homectrl"]);

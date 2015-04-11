@@ -3,7 +3,7 @@ html
   head
     title homectrl
 
-    link(rel="shortcut icon", href="#{root}static/img/favicon.ico", type="image/x-icon")
+    link(rel="shortcut icon", href="#{staticRoot}img/favicon.ico", type="image/x-icon")
 
     if useCdn
       link(rel="stylesheet",
@@ -11,10 +11,10 @@ html
       link(rel="stylesheet",
            href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.1.0/css/bootstrap3/bootstrap-switch.min.css")
     else
-      link(rel="stylesheet", href="#{root}static/vendor/bootstrap-3.2.0/css/bootstrap.min.css")
-      link(rel="stylesheet", href="#{root}static/vendor/bootstrap.switch-3.1.0/css/bootstrap.switch.min.css")
+      link(rel="stylesheet", href="#{staticRoot}vendor/bootstrap-3.2.0/css/bootstrap.min.css")
+      link(rel="stylesheet", href="#{staticRoot}vendor/bootstrap.switch-3.1.0/css/bootstrap.switch.min.css")
 
-    link(rel="stylesheet", href="#{root}static/css/styles.min.css")
+    link(rel="stylesheet", href="#{staticRoot}css/styles.css")
 
     meta(name="apple-mobile-web-app-capable", content="yes")
     meta(name="viewport", content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes")
@@ -67,15 +67,16 @@ html
       div#splashscreen
 
     script.
-      window._hcData = {
-        root   : "#{root}",
-        plugins: "#{plugins}" ? "#{plugins}".split(",") : [],
-        useCdn : #{useCdn},
-        ioPort : #{ioPort}
+      window.hcData = {
+        dynamicRoot: "#{dynamicRoot}",
+        staticRoot : "#{staticRoot}",
+        plugins    : "#{plugins}" ? "#{plugins}".split(",") : [],
+        useCdn     : #{useCdn},
+        wsPort     : #{wsPort}
       };
 
     if useCdn
       script(src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js",
-             data-main="#{root}static/js/main")
+             data-main="#{staticRoot}js/main")
     else
-      script(src="#{root}static/vendor/require-2.1.15.min.js", data-main="#{root}static/js/main")
+      script(src="#{staticRoot}vendor/require-2.1.15.min.js", data-main="#{staticRoot}js/main")
