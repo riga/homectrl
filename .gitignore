@@ -3,6 +3,7 @@ node_modules
 conf/*.json
 static/vendor/jclass.js
 static/vendor/eventemitter2.js
+static/vendor/async.js
 *.log
 *.DS_Store
 
