@@ -301,6 +301,9 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       // create the hash
       var hash = "#" + viewName;
 
+      // create the page title appendix
+      var title = viewName;
+
       // a plugin?
       if (~this.pluginNames.indexOf(viewName)) {
         var p = this.plugins[viewName];
@@ -312,6 +315,9 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
         // update hash
         hash += ".plugin#" + viewName;
 
+        // update the title
+        title = p._label;
+
         // call its onShow method
         p.onShow();
       }
@@ -322,7 +328,7 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       this.nodes.$titleHook.find(hash).show();
 
       // update the global title tag
-      $("head > title").html("homectrl - " + viewName);
+      $("head > title").html("homectrl - " + title);
 
       // set the current view name
       this.currentViewName = viewName;
