@@ -125,14 +125,14 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       // logout button
       this.nodes.$logout.click(function(event) {
         if (window.confirm("Do you really want to logout?")) {
-          $.post(self.dynamicRoot + "/logout");
+          $.post(self.dynamicRoot + "logout");
         }
       });
 
       // shutdown button
       this.nodes.$shutdown.click(function(event) {
         if (window.confirm("Do you really want to shutdown?")) {
-          $.post(self.dynamicRoot + "/shutdown");
+          $.post(self.dynamicRoot + "shutdown");
         }
       });
 
