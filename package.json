@@ -20,7 +20,7 @@
 	"dependencies" : {
 		"express": "4.9.6",
 		"socket.io": "1.1.0",
-		"jclass": "1.1.6",
+		"jclass": "1.1.7",
 		"eventemitter2": "0.4.14",
 		"argparse": "1.0.2",
 		"winston": "1.0.0",

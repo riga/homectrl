@@ -491,12 +491,14 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
 
       // catch and adjust emitted _outgoing_ messages
       this.on("out.*", function() {
-        var event = this.event.split(".");
         var args  = Array.prototype.slice.call(arguments);
+
+        var event = this.event.split(".");
+        var topic = event[1];
 
         // prepend the message topic ("message.plugin"), the plugin name,
         // and the actual event to the arguments
-        args = ["message.plugin", self.name, event[1]].concat(args);
+        args = ["message.plugin", self.name, topic].concat(args);
 
         // send
         homectrl.socket.emit.apply(homectrl.socket, args);
