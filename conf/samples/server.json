@@ -1,12 +1,14 @@
 {
 	"app": {
-		"host": "0.0.0.0",
-		"port": 8080,
-		"root": "/"
+		"host"      : "0.0.0.0",
+		"localPort" : 8080,
+		"publicPort": null,
+		"root"      : "/"
 	},
 
 	"websocket": {
-		"port": 8081
+		"localPort" : 8081,
+		"publicPort": null
 	},
 
 	"cache": {
