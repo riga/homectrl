@@ -19,7 +19,7 @@ module.exports = hc.Plugin._extend({
     var logData = this.config.get("sockets").map(function(socket) {
       return socket.label + "(" + socket.descr + ")";
     });
-    this.logger.info("sockets: %s", logData.join(", "));
+    this.logger.info("%s", logData.join(", "));
   },
 
   triggerSocket: function(i, state, callback) {
@@ -57,7 +57,7 @@ module.exports = hc.Plugin._extend({
         return callback(err);
       }
 
-      self.logger.debug("sockets: switch %s %s(%s)",
+      self.logger.debug("switch %s %s(%s)",
         state ? "on" : "off", socket.label, socket.descr);
 
       callback(null);
