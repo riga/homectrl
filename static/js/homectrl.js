@@ -404,6 +404,35 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
 
 
       return this;
+    },
+
+
+    /**
+     * Parses a response object as defined in lib/http.js/send and invokes a callback with two
+     * parameters: 1. an error object or null, 2. the response data.
+     *
+     * @param {object} res - The response object to parse.
+     * @param {function} [callback] - A function to call.
+     * @returns An error object (if any) or the response data.
+     */
+    parseResponse: function(res, callback) {
+      if (callback === undefined) {
+        callback = function(){};
+      }
+
+      var result;
+
+      // response successful when status is 200
+      if (res.status == 200) {
+        result = res.data;
+        callback(null, result);
+      } else {
+        result = new Error(res.message);
+        result.status = res.status;
+        callback(result);
+      }
+
+      return result;
     }
   });
 

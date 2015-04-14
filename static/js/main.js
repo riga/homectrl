@@ -16,7 +16,8 @@ var paths = {
   jqTransparency: "../vendor/jquery.transparency-0.10.0.min",
   bootstrap     : "../vendor/bootstrap-3.2.0/js/bootstrap.min",
   bsSwitch      : "../vendor/bootstrap.switch-3.1.0/js/bootstrap.switch.min",
-  io            : "../vendor/socket.io-1.1.0.min"
+  io            : "../vendor/socket.io-1.1.0.min",
+  async         : "../vendor/async"
 };
 
 // change some paths in case CDN's are used
