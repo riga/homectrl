@@ -1,11 +1,14 @@
 *.sublime-*
 node_modules
-conf/*.json
-conf/*.yaml
-static/vendor/jclass.js
-static/vendor/eventemitter2.js
-static/vendor/async.js
 *.log
 *.DS_Store
 
-plugins/cam/static/img/cam.png
+conf/*.json
+conf/*.yaml
+
+static/vendor/jclass.js
+static/vendor/eventemitter2.js
+static/vendor/async.js
+
+plugins/*
+!plugins/_template

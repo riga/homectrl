@@ -1,3 +1,0 @@
-# homectrl - GPIO Plugin
-
-TODO

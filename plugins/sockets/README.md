@@ -1,1 +1,0 @@
-# homectrl - sockets Plugin
