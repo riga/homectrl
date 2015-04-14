@@ -34,7 +34,7 @@ module.exports = hc.Plugin._extend({
     this.emit("out.started", "all");
 
     // log
-    this.logger.info("{{name}}: setup");
+    this.logger.info("setup");
   },
 
   // custom method
