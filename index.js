@@ -28,6 +28,20 @@ process.chdir(__dirname);
 
 
 /**
+ * Update NODE_PATH to support imports for plugins
+ * that are loaded via symlinks.
+ */
+
+var nodePath = path.join(__dirname, "node_modules");
+
+if (typeof(process.env.NODE_PATH) != "string") {
+  process.env.NODE_PATH = nodePath;
+} else {
+  process.env.NODE_PATH += ";" + nodePath;
+}
+
+
+/**
  * Create config files from samples.
  */
 
