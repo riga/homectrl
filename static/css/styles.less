@@ -5,181 +5,181 @@
 
 
 .absolute() {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
 }
 
 .absolute2() {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    height: 100%;
-    width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
 }
 
 .homectrl-switch(@width) {
-    #menu {
-        width: @width;
+  #menu {
+    width: @width;
+  }
+
+  &.menu-open {
+    #page {
+      left: @width;
+      right: -@width;
+
+      #blocker {
+        display: block;
+      }
     }
 
-    &.menu-open {
-        #page {
-            left: @width;
-            right: -@width;
-
-            #blocker {
-                display: block;
-            }
-        }
-
-        // &.menu-on-canvas {
-        //   #page {
-        //         left: @width;
-        //         right: 0px;
-
-        //         #blocker {
-        //             display: none;
-        //         }
-        //     }
-        // }
-    }
+    // &.menu-on-canvas {
+    //   #page {
+    //     left: @width;
+    //     right: 0px;
+    //
+    //     #blocker {
+    //       display: none;
+    //     }
+    //   }
+    // }
+  }
 }
 
 #homectrl {
+  .absolute();
+  overflow: hidden;
+  background-color: white;
+
+  #menu {
+    .absolute2();
+    width: 0px;
+    padding-top: @header-height;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .dropdown-header {
+      padding: 5px 20px;
+
+      &:not(:first-child) {
+        margin-top: 5px;
+      }
+    }
+
+    .nav-pills > li > a {
+      border-radius: 0px;
+    }
+
+    a > i.glyphicon:first-child {
+      margin-right: 5px;
+    }
+  }
+
+  #page {
     .absolute();
+    z-index: 1;
+    background-color: #fff;
     overflow: hidden;
+    box-shadow: -1px 0px 4px #888;
+    transition: left 0.2s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+
+    #header {
+      .absolute2();
+      height: @header-height;
+      z-index: 1;
+      color: white;
+
+      > div {
+        position: absolute;
+        height: 100%;
+        padding: 0px 4px;
+        display: table;
+
+        &:nth-child(1) {
+          left: 0px;
+          width: 50%;
+          z-index: 2;
+        }
+
+        &:nth-child(2) {
+          left: 0px;
+          width: 100%;
+          text-align: center;
+        }
+
+        &:nth-child(3) {
+          right: 0px;
+          width: 50%;
+          z-index: 2;
+        }
+
+        > div {
+          width: 100%;
+          height: 100%;
+          display: table-cell;
+          vertical-align: middle;
+
+          > span {
+            height: 100%;
+          }
+        }
+      }
+
+      #title-hook > span {
+        display: none;
+        font-size: 18px;
+      }
+    }
+
+    #content {
+      .absolute();
+      top: @header-height;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      background-image: url(../img/gplaypattern.png);
+
+      .info {
+        .absolute();
+        display: none;
+      }
+
+      .plugin {
+        .absolute();
+        display: none;
+      }
+    }
+
+    #blocker {
+      .absolute();
+      display: none;
+    }
+  }
+
+  #splashscreen {
+    .absolute();
+    z-index: 1;
     background-color: white;
+  }
 
-    #menu {
-        .absolute2();
-        width: 0px;
-        padding-top: @header-height;
-        overflow-x: hidden;
-        overflow-y: auto;
+  .homectrl-switch(@menu-width-desktop);
 
-        .dropdown-header {
-            padding: 5px 20px;
-
-            &:not(:first-child) {
-                margin-top: 5px;
-            }
-        }
-
-        .nav-pills > li > a {
-            border-radius: 0px;
-        }
-
-        a > i.glyphicon:first-child {
-            margin-right: 5px;
-        }
-    }
-
-    #page {
-        .absolute();
-        z-index: 1;
-        background-color: #fff;
-        overflow: hidden;
-        box-shadow: -1px 0px 4px #888;
-        transition: left 0.2s cubic-bezier(0.190, 1.000, 0.220, 1.000);
-
-        #header {
-            .absolute2();
-            height: @header-height;
-            z-index: 1;
-            color: white;
-
-            > div {
-                position: absolute;
-                height: 100%;
-                padding: 0px 4px;
-                display: table;
-
-                &:nth-child(1) {
-                    left: 0px;
-                    width: 50%;
-                    z-index: 2;
-                }
-
-                &:nth-child(2) {
-                    left: 0px;
-                    width: 100%;
-                    text-align: center;
-                }
-
-                &:nth-child(3) {
-                    right: 0px;
-                    width: 50%;
-                    z-index: 2;
-                }
-
-                > div {
-                    width: 100%;
-                    height: 100%;
-                    display: table-cell;
-                    vertical-align: middle;
-
-                    > span {
-                        height: 100%;
-                    }
-                }
-            }
-
-            #title-hook > span {
-                display: none;
-                font-size: 18px;
-            }
-        }
-
-        #content {
-            .absolute();
-            top: @header-height;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            background-image: url(../img/gplaypattern.png);
-
-            .info {
-                .absolute();
-                display: none;
-            }
-
-            .plugin {
-                .absolute();
-                display: none;
-            }
-        }
-
-        #blocker {
-            .absolute();
-            display: none;
-        }
-    }
-
-    #splashscreen {
-        .absolute();
-        z-index: 1;
-        background-color: white;
-    }
-
-    .homectrl-switch(@menu-width-desktop);
-
-    @media (max-width:@menu-width-breakpoint) {
-        .homectrl-switch(@menu-width-mobile);
-    }
+  @media (max-width:@menu-width-breakpoint) {
+    .homectrl-switch(@menu-width-mobile);
+  }
 }
 
 
 .nav.nav-pills.nav-stacked {
-    .divider {
-        height: 1px;
-        overflow: hidden;
-        background-color: #e5e5e5;
-    }
+  .divider {
+    height: 1px;
+    overflow: hidden;
+    background-color: #e5e5e5;
+  }
 }
 
 .glyphicon-none:before {
-    content: "\2122";
-    color: transparent !important;
+  content: "\2122";
+  color: transparent !important;
 }
