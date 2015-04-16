@@ -35,6 +35,9 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       this.staticRoot  = window.hcData.staticRoot;
 
       // a logger
+      if (!window.hcData.logging) {
+        $.Logger().disable();
+      }
       this.logger = $.Logger("homectrl");
 
       // jQuery DOM nodes
