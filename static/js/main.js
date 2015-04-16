@@ -13,7 +13,7 @@ var paths = {
   vendor        : "../vendor/",
   jquery        : "../vendor/jquery-2.1.3.min",
   jqCookie      : "../vendor/jquery.cookie-1.4.1.min",
-  jqLogger      : "../vendor/jquery.logger-0.3.2.min",
+  jqLogger      : "../vendor/jquery.logger-0.3.3.min",
   jqTransparency: "../vendor/jquery.transparency-0.10.0.min",
   bootstrap     : "../vendor/bootstrap-3.2.0/js/bootstrap.min",
   bsSwitch      : "../vendor/bootstrap.switch-3.1.0/js/bootstrap.switch.min",
