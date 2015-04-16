@@ -1,0 +1,7 @@
+*.sublime-*
+node_modules
+*.log
+*.DS_Store
+
+conf/*.json
+conf/*.yaml

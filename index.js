@@ -45,22 +45,7 @@ if (typeof(process.env.NODE_PATH) != "string") {
  * Create config files from samples.
  */
 
-var samplesPath = path.join("conf", "samples");
-fs.readdirSync(samplesPath).forEach(function(file) {
-  var src = path.join(samplesPath, file);
-  var dst = path.join("conf", file);
-
-  // is a config file?
-  var content = util.readConfig(src, false);
-  if (content == null) {
-    return;
-  }
-
-  // copy only if necessary
-  if (!fs.existsSync(dst)) {
-    fs.writeFileSync(dst, content);
-  }
-});
+util.copySamples("conf");
 
 
 /**
