@@ -34,6 +34,9 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       this.dynamicRoot = window.hcData.dynamicRoot;
       this.staticRoot  = window.hcData.staticRoot;
 
+      // a logger
+      this.logger = $.Logger("homectrl");
+
       // jQuery DOM nodes
       this.nodes = {};
 
@@ -158,6 +161,9 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       // hide the splashscreen
       $("#splashscreen").hide();
 
+
+      this.logger.info("setup UI");
+
       // callback
       callback(null);
 
@@ -183,6 +189,8 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       var wsHost  = window.location.protocol + "//" + window.location.hostname + ":"
                   + window.hcData.wsPort;
       this.socket = io.connect(wsHost, { path: window.hcData.wsRoot });
+
+      this.logger.info("setup websocket at '%s%s'", wsHost, window.hcData.wsRoot);
 
       // store the socket id in a cookie so that it is sent in each http request
       this.socket.on("id", function(id) {
@@ -231,6 +239,8 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       var pluginModules = this.pluginNames.map(function(name) {
         return "plugins/" + name + "/index";
       });
+
+      this.logger.info("setup plugins");
 
       // require plugins in parallel
       require(pluginModules, function() {
@@ -333,6 +343,8 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       // set the current view name
       this.currentViewName = viewName;
 
+      this.logger.debug("show view '%s'", viewName);
+
 
       return this;
     },
@@ -368,6 +380,8 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
 
       // update the global title tag
       $("head > title").html("homectrl");
+
+      this.logger.debug("hide view '%s'", this.currentViewName);
 
       // finally, reset the current view name and the current hash
       this.currentViewName = null;
@@ -473,6 +487,9 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       this.dynamicRoot = window.hcData.dynamicRoot + "plugins/" + name + "/";
       this.staticRoot  = this.dynamicRoot + "static/";
 
+      // a logger
+      this.logger = $.Logger(name);
+
       // store the current label and icon class
       this._label     = null;
       this._iconClass = null;
@@ -555,6 +572,8 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       this.setLabel(this.name);
       this.setIcon("none");
 
+      this.logger.info("setup");
+
       return this;
     },
 
@@ -572,6 +591,9 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       .attr("rel", "stylesheet")
       .attr("href", this.staticRoot + "css/" + file)
       .appendTo("head");
+
+      this.logger.debug("add css file '%s'", file);
+
 
       return this;
     },
@@ -595,6 +617,8 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       if (this.nodes.$menuItem) {
         this.nodes.$menuItem.find("a > span").html(label);
       }
+
+      this.logger.debug("set label to '%s'", label);
 
       return this;
     },
@@ -624,6 +648,8 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       if (this.nodes.$menuItem) {
         this.nodes.$menuItem.find("a > i").attr("class", iconClass);
       }
+
+      this.logger.debug("set icon class to '%s'", iconClass);
 
       return this;
     },
@@ -691,12 +717,14 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
     getTemplate: function(path, data) {
       var args = Array.prototype.slice.call(arguments, 2);
 
-      if (data === undefined) {
+      if (data === undefined || (typeof(data) == "object" && Object.keys(data).length == 0)) {
         data = null;
       }
 
       // prepend the proper GET resource ("_template") and the request object 
-      args = ["_template", { path: path, data: null }].concat(args);
+      args = ["_template", { path: path, data: data }].concat(args);
+
+      this.logger.debug("request template '%s' with data '%o'", path, data);
 
       return this.GET.apply(this, args);
     },
@@ -708,6 +736,8 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
      * @returns {this}
      */
     onShow: function() {
+      this.logger.info("show");
+
       return this;
     },
 
@@ -718,6 +748,8 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
      * @returns {this}
      */
     onHide: function() {
+      this.logger.info("hide");
+
       return this;
     }
   });
