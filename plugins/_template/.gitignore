@@ -5,3 +5,5 @@ node_modules
 
 conf/*.json
 conf/*.yaml
+
+*.css

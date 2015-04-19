@@ -1,8 +1,18 @@
+@blue: #428bca;
 @header-height: 40px;
 @menu-width-desktop: 250px;
 @menu-width-mobile: 80%;
 @menu-width-breakpoint: 768px;
 
+
+html {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: @blue;
+}
 
 .absolute() {
   position: absolute;
@@ -90,6 +100,19 @@
       height: @header-height;
       z-index: 1;
       color: white;
+      background-color: @blue;
+
+      .btn-default {
+        color: @blue;
+        background-color: #fff;
+        border-color: #ccc;
+
+        &:hover, &:focus {
+          color: @blue;
+          background-color: #e6e6e6 !important;
+          border-color: #adadad;
+        }
+      }
 
       > div {
         position: absolute;
@@ -139,6 +162,7 @@
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       background-image: url(../img/gplaypattern.png);
+      background-position: center;
 
       .info {
         .absolute();

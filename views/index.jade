@@ -3,7 +3,7 @@ html
   head
     title homectrl
 
-    link(rel="shortcut icon", href="#{staticRoot}img/favicon.ico")
+    link(rel="shortcut icon", href="#{staticRoot}public/favicon.ico")
 
     if useCdn
       link(rel="stylesheet",
@@ -16,11 +16,20 @@ html
 
     link(rel="stylesheet", href="#{staticRoot}css/styles.css")
 
+    //- iOS web app settings
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
     meta(name="apple-mobile-web-app-capable", content="yes")
-    meta(name="viewport", content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes")
+    meta(name="apple-mobile-web-app-title", content="homectrl")
     meta(name="apple-mobile-web-app-status-bar-style", content="black")
+    meta(name="format-detection", content="telephone=no")
+    each size in [192, 180, 152, 144, 120, 114, 76, 72, 57]
+      link(rel="apple-touch-icon-precomposed", sizes="#{size}x#{size}", href="#{staticRoot}public/icon_#{size}.png")
 
-  body.label-primary
+    //- Android web app settings
+    meta(name="mobile-web-app-capable", content="yes")
+    link(rel="manifest" href="#{staticRoot}public/manifest.json")
+
+  body
 
     div#homectrl
 
@@ -39,13 +48,13 @@ html
               |  About
 
       div#page
-        div#header.label-primary
+        div#header
           div
             div.text-left
               div.btn-group(role="group")
-                button.btn.btn-primary#menu-toggle(role="button")
+                button.btn.btn-default#menu-toggle(role="button")
                   i.glyphicon.glyphicon-align-justify
-                button.btn.btn-primary#reload(role="button")
+                button.btn.btn-default#reload(role="button")
                   i.glyphicon.glyphicon-refresh
 
           div
@@ -57,9 +66,9 @@ html
           div
             div.text-right
               div.btn-group(role="group")
-                button.btn.btn-primary#logout(role="button", title="logout")
+                button.btn.btn-default#logout(role="button", title="logout")
                   i.glyphicon.glyphicon-log-out
-                button.btn.btn-primary#shutdown(role="button", title="shutdown")
+                button.btn.btn-default#shutdown(role="button", title="shutdown")
                   i.glyphicon.glyphicon-off
 
         div#content

@@ -6,6 +6,8 @@ node_modules
 conf/*.json
 conf/*.yaml
 
+*.css
+
 static/vendor/jclass.js
 static/vendor/eventemitter2.js
 static/vendor/async.js
