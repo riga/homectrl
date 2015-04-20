@@ -16,7 +16,7 @@ var paths = {
   jqLogger      : "../vendor/jquery.logger-0.4.1.min",
   jqTransparency: "../vendor/jquery.transparency-0.10.0.min",
   bootstrap     : "../vendor/bootstrap-3.2.0/js/bootstrap.min",
-  bsSwitch      : "../vendor/bootstrap.switch-3.1.0/js/bootstrap.switch.min",
+  bsSwitch      : "../vendor/bootstrap.switch-3.3.2/js/bootstrap.switch.min",
   io            : "../vendor/socket.io-1.3.5.min",
   async         : "../vendor/async"
 };
