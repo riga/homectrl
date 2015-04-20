@@ -50,7 +50,6 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       this.plugins = {};
 
       // state variables
-      this.menuOpen        = false;
       this.currentViewName = null;
 
       // store plugin names
@@ -102,16 +101,33 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
        * Find and store jQuery DOM nodes.
        */
 
-      this.nodes.$main         = $("#homectrl").first();
-      this.nodes.$menu         = this.nodes.$main.find("#menu").first();
-      this.nodes.$menuItemHook = this.nodes.$menu.find("#menu-item-hook").first();
-      this.nodes.$menuToggle   = this.nodes.$main.find("#page > #header #menu-toggle").first();
-      this.nodes.$reload       = this.nodes.$main.find("#page > #header #reload").first();
-      this.nodes.$logout       = this.nodes.$main.find("#page > #header #logout").first();
-      this.nodes.$shutdown     = this.nodes.$main.find("#page > #header #shutdown").first();
-      this.nodes.$content      = this.nodes.$main.find("#page > #content").first();
-      this.nodes.$blocker      = this.nodes.$main.find("#page > #blocker").first();
-      this.nodes.$titleHook    = this.nodes.$main.find("#page > #header #title-hook").first();
+      this.nodes.$main           = $("#homectrl").first();
+      this.nodes.$menu           = this.nodes.$main.find("#menu").first();
+      this.nodes.$menuItemHook   = this.nodes.$menu.find("#menu-item-hook").first();
+      this.nodes.$menuToggle     = this.nodes.$main.find("#page > #header #menu-toggle").first();
+      this.nodes.$menuTypeSwitch = this.nodes.$main.find("#menu-type-switch input").first();
+      this.nodes.$reload         = this.nodes.$main.find("#page > #header #reload").first();
+      this.nodes.$logout         = this.nodes.$main.find("#page > #header #logout").first();
+      this.nodes.$shutdown       = this.nodes.$main.find("#page > #header #shutdown").first();
+      this.nodes.$content        = this.nodes.$main.find("#page > #content").first();
+      this.nodes.$blocker        = this.nodes.$main.find("#page > #blocker").first();
+      this.nodes.$titleHook      = this.nodes.$main.find("#page > #header #title-hook").first();
+
+
+      /**
+       * Setup some nodes.
+       */
+
+      // setup the menu type switch
+      this.nodes.$menuTypeSwitch.bootstrapSwitch({
+        size: "mini",
+        onSwitchChange: function(_, state) {
+          self.toggleMenuType(state);
+        }
+      });
+
+      // set its initial state based on the cookie
+      this.nodes.$menuTypeSwitch.bootstrapSwitch("state", $.cookie("menuOnCanvas") == "true");
 
 
       /**
@@ -121,6 +137,7 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       // menu toggle button
       this.nodes.$menuToggle.click(function(event) {
         self.toggleMenu();
+        this.blur();
       });
 
       // reload button
@@ -148,7 +165,7 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
         self.toggleMenu(false);
       });
 
-      // clicks in menu items
+      // clicks in menu items, except plugin menu items
       $("#menu > ul > li > a").click(function(event) {
         self.toggleMenu(false);
       });
@@ -395,6 +412,26 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
 
 
     /**
+     * Returns true of the menu is open, or false otherwise.
+     *
+     * @returns {boolean}
+     */
+    menuIsOpen: function() {
+      return this.nodes.$main.hasClass("menu-open") || this.menuIsOnCanvas();
+    },
+
+
+    /**
+     * Returns true if the menu is on-canvas, or false otherwise.
+     *
+     * @returns {boolean}
+     */
+    menuIsOnCanvas: function() {
+      return this.nodes.$main.hasClass("menu-on-canvas");
+    },
+
+
+    /**
      * Toggle the menu.
      *
      * @param {boolean} [state] - If set, `state` determines whether the menu should be shown or
@@ -405,19 +442,51 @@ define(["emitter", "jquery", "io", "vendor/async"], function(Emitter, $, io, asy
       if (state !== undefined) {
         // convert truthy to boolean
         state = !!state;
+      } else {
+        state = !this.menuIsOpen();
       }
 
-      // change?
-      if (state == this.menuOpen) {
-        // nothing happens
-        return this;
+      if (!state && this.menuIsOnCanvas()) {
+        this.toggleMenuType(false);
       }
-
-      this.menuOpen = !this.menuOpen;
 
       // simply add or remove the menu-open class,
       // all changes are css-based
-      this.nodes.$main.toggleClass("menu-open", this.menuOpen);
+      this.nodes.$main.toggleClass("menu-open", state);
+
+
+      return this;
+    },
+
+
+    /**
+     * Toggle the menu type, i.e. on- or off-canvas.
+     *
+     * @param {boolean} [state] - If set, `state` determines whether the menu should be on-canvas
+     *   or not. Otherwise, the type is toggled.
+     * @returns {this}
+     */
+    toggleMenuType: function(state) {
+      if (state !== undefined) {
+        // convert truthy to boolean
+        state = !!state;
+      } else {
+        state = !this.menuIsOnCanvas();
+      }
+
+      if (state && this.menuIsOpen()) {
+        this.toggleMenu(false);
+      }
+
+      // simply add or remove the menu-on-canvas class,
+      // all changes are css-based
+      this.nodes.$main.toggleClass("menu-on-canvas", state);
+
+      // make sure the switch is in it's correct position
+      this.nodes.$menuTypeSwitch.bootstrapSwitch("state", state, true);
+
+      // also set a cookie
+      $.cookie("menuOnCanvas", state);
 
 
       return this;

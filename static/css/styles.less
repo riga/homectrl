@@ -1,34 +1,57 @@
+/**
+ * Variables.
+ */
+
 @blue: #428bca;
 @header-height: 40px;
 @menu-width-desktop: 250px;
 @menu-width-mobile: 80%;
 @menu-width-breakpoint: 768px;
+@page-transition: 0.2s cubic-bezier(0.190, 1.000, 0.220, 1.000);
 
 
-html {
-  height: 100%;
-  -webkit-text-size-adjust: 100%;
-}
+/**
+ * General mixins.
+ */
 
-body {
-  background-color: @blue;
-}
-
-.absolute() {
+.absolute(@top: 0px; @right: 0px; @bottom: 0px; @left: 0px) {
   position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
+  top: @top;
+  right: @right;
+  bottom: @bottom;
+  left: @left;
 }
 
-.absolute2() {
+.absolute2(@top: 0px; @left: 0px; @height: 100%; @width: 100%) {
   position: absolute;
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  width: 100%;
+  top: @top;
+  left: @left;
+  height: @height;
+  width: @width;
 }
+
+
+/**
+ * General styles.
+ */
+
+.nav.nav-pills.nav-stacked {
+  .divider {
+    height: 1px;
+    overflow: hidden;
+    background-color: #e5e5e5;
+  }
+}
+
+.glyphicon-none:before {
+  content: "\2122";
+  color: transparent !important;
+}
+
+
+/**
+ * Content-related mixins.
+ */
 
 .homectrl-switch(@width) {
   #menu {
@@ -44,18 +67,32 @@ body {
         display: block;
       }
     }
-
-    // &.menu-on-canvas {
-    //   #page {
-    //     left: @width;
-    //     right: 0px;
-    //
-    //     #blocker {
-    //       display: none;
-    //     }
-    //   }
-    // }
   }
+
+  &.menu-on-canvas {
+    #page {
+      left: @width;
+      right: 0px;
+    }
+
+    #blocker {
+      display: none !important;
+    }
+  }
+}
+
+
+/**
+ * homectrl styles.
+ */
+
+html {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: @blue;
 }
 
 #homectrl {
@@ -66,9 +103,37 @@ body {
   #menu {
     .absolute2();
     width: 0px;
-    padding-top: @header-height;
+    padding-top: @header-height + 10px;
     overflow-x: hidden;
     overflow-y: auto;
+
+    #menu-type-switch {
+      .absolute2(@height: @header-height);
+      display: table;
+
+      > div {
+        height: 100%;
+        width: 100%;
+        display: table-cell;
+        vertical-align: middle;
+        padding-left: 15px;
+
+        > span {
+          font-size: 12px;
+          color: #777;
+        }
+
+        .bootstrap-switch {
+          float: right !important;
+          margin-right: 15px;
+
+          &.bootstrap-switch-animate .bootstrap-switch-container {
+            -webkit-transition: margin-left @page-transition;
+            transition: margin-left @page-transition;
+          }
+        }
+      }
+    }
 
     .dropdown-header {
       padding: 5px 20px;
@@ -93,7 +158,8 @@ body {
     background-color: #fff;
     overflow: hidden;
     box-shadow: -1px 0px 4px #888;
-    transition: left 0.2s cubic-bezier(0.190, 1.000, 0.220, 1.000);
+    transition: left @page-transition, right @page-transition;
+
 
     #header {
       .absolute2();
@@ -192,18 +258,4 @@ body {
   @media (max-width:@menu-width-breakpoint) {
     .homectrl-switch(@menu-width-mobile);
   }
-}
-
-
-.nav.nav-pills.nav-stacked {
-  .divider {
-    height: 1px;
-    overflow: hidden;
-    background-color: #e5e5e5;
-  }
-}
-
-.glyphicon-none:before {
-  content: "\2122";
-  color: transparent !important;
 }
