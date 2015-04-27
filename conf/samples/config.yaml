@@ -29,9 +29,14 @@ auth:
   pass: foobar
   deadtime: 5000
 
+mongodb:
+  url: mongodb://localhost:27017/homectrl
+  options:
+    uri_decode_auth: false
+
 agenda:
   db:
-    address: localhost:27017/agenda-example
+    address: localhost:27017/homectrl-agenda
     collection: agendaJobs
   name: homectrl queue
   processEvery: 30 seconds
