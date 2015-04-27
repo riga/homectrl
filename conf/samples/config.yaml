@@ -29,6 +29,16 @@ auth:
   pass: foobar
   deadtime: 5000
 
+agenda:
+  db:
+    address: localhost:27017/agenda-example
+    collection: agendaJobs
+  name: homectrl queue
+  processEvery: 30 seconds
+  maxConcurreny: 20
+  defaultConcurrency: 5
+  defaultLockLifetime: 120000
+
 client:
   useCdn: false
   logging: true

@@ -67,8 +67,23 @@ util.createSymlink("../../node_modules/async/lib/async.js", "static/vendor/async
  * Start the server.
  */
 
-var opts = {
+var subProcess = cp.fork("lib/server.js", process.argv.splice(2), {
   cwd: __dirname,
   env: process.env
-};
-cp.fork("lib/server.js", process.argv.splice(2), opts);
+});
+
+
+/**
+ * Event handling.
+ */
+
+// the sub process handles signals,
+// so the main process does nothing when any signal occurs
+["SIGTERM", "SIGINT", "SIGQUIT"].forEach(function(signal) {
+  process.on(signal, function(){});
+});
+
+// exit when the sub process exits
+subProcess.on("exit", function(code) {
+  process.exit(code);
+});
