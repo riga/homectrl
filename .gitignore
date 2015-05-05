@@ -1,7 +1,4 @@
 *.sublime-*
 node_modules
-conf/*.json
-static/vendor/jclass.js
-static/vendor/eventemitter2.js
 *.log
 *.DS_Store
