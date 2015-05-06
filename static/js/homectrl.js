@@ -103,6 +103,7 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
 
       this.nodes.$main           = $("#homectrl").first();
       this.nodes.$menu           = this.nodes.$main.find("#menu").first();
+      this.nodes.$header         = this.nodes.$main.find("#page > #header").first();
       this.nodes.$menuItemHook   = this.nodes.$menu.find("#menu-item-hook").first();
       this.nodes.$menuToggle     = this.nodes.$main.find("#page > #header #menu-toggle").first();
       this.nodes.$menuTypeSwitch = this.nodes.$main.find("#menu-type-switch input").first();
@@ -182,6 +183,15 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
 
       // hide the splashscreen
       $("#splashscreen").hide();
+
+      // initialize navbar tooltips
+      this.nodes.$header.find("[data-toggle='tooltip']").tooltip({
+        delay: {
+          show: 500,
+          hide: 0
+        },
+        placement: "bottom"
+      });
 
 
       this.logger.info("setup UI");
