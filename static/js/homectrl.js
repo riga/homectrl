@@ -167,7 +167,9 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
 
       // clicks in menu items, except plugin menu items
       $("#menu > ul > li > a").click(function(event) {
-        self.toggleMenu(false);
+        if (!self.menuIsOnCanvas()) {
+          self.toggleMenu(false);
+        }
       });
 
       // react to hash changes
@@ -474,10 +476,6 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
         state = !this.menuIsOnCanvas();
       }
 
-      if (state && this.menuIsOpen()) {
-        this.toggleMenu(false);
-      }
-
       // simply add or remove the menu-on-canvas class,
       // all changes are css-based
       this.nodes.$main.toggleClass("menu-on-canvas", state);
@@ -603,7 +601,9 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
 
       // menu event
       this.nodes.$menuItem.find("a").click(function(event) {
-        hc.toggleMenu(false);
+        if (!hc.menuIsOnCanvas()) {
+          hc.toggleMenu(false);
+        }
       });
 
 
@@ -796,8 +796,8 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
      * Shows an alert message.
      *
      * @param {string} msg - The message to alert.
-     * @param {object} options - Options: dismissible (true), alertClass (alert-danger), timeout
-     *   (4000)
+     * @param {object} options - Options. Fields with default values are: dismissible (true),
+     *   alertClass (alert-danger), timeout (4000)
      * @returns {this}
      */
     alert: function(msg, options) {
@@ -857,7 +857,7 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
 
       this.logger.info("show");
 
-      // fetch all messages
+      // show queued messages
       window.setTimeout(function() {
         self.messages.forEach(function(message) {
           message();
