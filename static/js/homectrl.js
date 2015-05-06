@@ -128,7 +128,10 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
       });
 
       // set its initial state based on the cookie
-      this.nodes.$menuTypeSwitch.bootstrapSwitch("state", $.cookie("menuOnCanvas") == "true");
+      if ($.cookie("menuOnCanvas") == "true") {
+        self.toggleMenu(true);
+        self.toggleMenuType(true);
+      }
 
 
       /**
