@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-# simple bash script that starts the homectrl server
-# which is useful when the bin directory was added to PATH
-
-BASE=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-node "$BASE/.." "$@"
