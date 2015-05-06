@@ -1,0 +1,16 @@
+*.sublime-*
+node_modules
+*.log
+*.DS_Store
+
+conf/*.json
+conf/*.yaml
+
+static/css/*.css
+
+static/vendor/jclass.js
+static/vendor/eventemitter2.js
+static/vendor/async.js
+
+plugins/*
+!plugins/_template

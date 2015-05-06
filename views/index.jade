@@ -1,0 +1,104 @@
+doctype
+html
+  head
+    title homectrl
+
+    link(rel="shortcut icon", href="#{staticRoot}public/favicon.ico")
+
+    if useCdn
+      link(rel="stylesheet",
+           href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css")
+      link(rel="stylesheet",
+           href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.1.0/css/bootstrap3/bootstrap-switch.min.css")
+    else
+      link(rel="stylesheet", href="#{staticRoot}vendor/bootstrap-3.2.0/css/bootstrap.min.css")
+      link(rel="stylesheet", href="#{staticRoot}vendor/bootstrap.switch-3.3.2/css/bootstrap.switch.min.css")
+
+    link(rel="stylesheet", href="#{staticRoot}css/styles.css")
+
+    //- iOS web app settings
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(name="apple-mobile-web-app-capable", content="yes")
+    meta(name="apple-mobile-web-app-title", content="homectrl")
+    meta(name="apple-mobile-web-app-status-bar-style", content="black")
+    meta(name="format-detection", content="telephone=no")
+    each size in [192, 180, 152, 144, 120, 114, 76, 72, 57]
+      link(rel="apple-touch-icon-precomposed", sizes="#{size}x#{size}", href="#{staticRoot}public/icon_#{size}.png")
+
+    //- Android web app settings
+    meta(name="mobile-web-app-capable", content="yes")
+    link(rel="manifest" href="#{staticRoot}public/manifest.json")
+
+  body
+
+    div#homectrl
+
+      nav#menu(role="navigation")
+        div#menu-type-switch
+          div
+            span Always show menu
+            input(type="checkbox")
+
+
+        ul.nav.nav-pills.nav-stacked(role="menu")
+          li.dropdown-header Plugins
+
+          //- Plugin entries go here
+
+          li.divider#menu-item-hook
+
+          li.dropdown-header Info
+          li.info#About
+            a(href="#About")
+              i.glyphicon.glyphicon-info-sign
+              |  About
+
+      div#page
+        div#header
+          div
+            div.text-left
+              div.btn-group(role="group")
+                button.btn.btn-default#menu-toggle(role="button")
+                  i.glyphicon.glyphicon-align-justify
+                button.btn.btn-default#reload(role="button")
+                  i.glyphicon.glyphicon-refresh
+
+          div
+            div#title-hook
+              span#About
+                i.glyphicon.glyphicon-info-sign
+                |  About
+
+          div
+            div.text-right
+              div.btn-group(role="group")
+                button.btn.btn-default#logout(role="button", title="logout")
+                  i.glyphicon.glyphicon-log-out
+                button.btn.btn-default#shutdown(role="button", title="shutdown")
+                  i.glyphicon.glyphicon-off
+
+        div#content
+          div.info#About About
+
+          //- Plugins go here
+
+        div#blocker
+
+      div#splashscreen
+
+    script.
+      window.hcData = {
+        dynamicRoot: "#{dynamicRoot}",
+        staticRoot : "#{staticRoot}",
+        plugins    : "#{plugins}" ? "#{plugins}".split(",") : [],
+        useCdn     : #{useCdn},
+        wsPort     : #{wsPort},
+        wsRoot     : "#{wsRoot}",
+        logging    : #{logging}
+      };
+
+    if useCdn
+      script(src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js",
+             data-main="#{staticRoot}js/main")
+    else
+      script(src="#{staticRoot}vendor/require-2.1.15.min.js", data-main="#{staticRoot}js/main")
