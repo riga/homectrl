@@ -574,7 +574,7 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
 
       // html templates
       var wrapperTmpl  = "<div class='plugin'><div class='content'></div><div class='messages'></div></div>";
-      var menuItemTmpl = "<li class='plugin'><a><i></i> <span></span></a></li>";
+      var menuItemTmpl = "<li class='plugin'><a><i></i> <span></span><span class='badge pull-right'></span></a></li>";
       var titleTmpl    = "<span class='plugin'><i></i> <span></span></span>";
 
       // setup the wrapper node
@@ -653,7 +653,7 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
 
         // set the label in the menu entry
         if (this.nodes.$menuItem) {
-          this.nodes.$menuItem.find("a > span").html(label);
+          this.nodes.$menuItem.find("a > span").first().html(label);
         }
 
         this.logger.debug("set label to '%s'", label);
@@ -841,6 +841,10 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
         message();
       } else {
         this.messages.push(message);
+
+        this.nodes.$menuItem.find("a > span.badge")
+        .html(String(this.messages.length))
+        .show();
       }
 
       return this;
@@ -862,6 +866,10 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
         self.messages.forEach(function(message) {
           message();
         });
+
+        self.nodes.$menuItem.find("a > span.badge")
+        .empty()
+        .hide();
       }, 200);
 
       return this;
