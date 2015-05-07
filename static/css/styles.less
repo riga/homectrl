@@ -108,6 +108,7 @@ body {
     overflow-y: auto;
     background-image: url(../img/grey.png);
     background-position: center top;
+    transition: width @page-transition;
 
     #menu-type-switch {
       .absolute2(@height: @header-height);
@@ -164,8 +165,7 @@ body {
 
 
     #header {
-      .absolute2();
-      height: @header-height;
+      .absolute2(@height: @header-height);
       z-index: 1;
       color: white;
       background-color: @blue;
