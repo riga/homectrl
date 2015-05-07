@@ -223,9 +223,9 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
       // build up the connection
       var wsHost  = window.location.protocol + "//" + window.location.hostname + ":"
                   + window.hcData.wsPort;
-      this.socket = io.connect(wsHost, { path: window.hcData.wsRoot });
+      this.socket = io.connect(wsHost);
 
-      this.logger.info("setup websocket at '%s%s'", wsHost, window.hcData.wsRoot);
+      this.logger.info("setup websocket at '%s'", wsHost);
 
       // store the socket id in a cookie so that it is sent in each http request
       this.socket.on("id", function(id) {
