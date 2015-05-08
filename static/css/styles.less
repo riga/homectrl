@@ -93,6 +93,11 @@ html {
 
 body {
   background-color: @blue;
+
+  #splashscreen {
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
 }
 
 #homectrl {
@@ -103,37 +108,31 @@ body {
   #menu {
     .absolute2();
     width: 0px;
-    padding-top: @header-height + 10px;
+    padding-top: @header-height;
     overflow-x: hidden;
     overflow-y: auto;
     background-image: url(../img/grey.png);
     background-position: center top;
     transition: width @page-transition;
 
-    #menu-type-switch {
-      .absolute2(@height: @header-height);
-      display: table;
+    li.dropdown-header:not(:first-child) {
+      margin-top: 15px !important;
+    }
 
-      > div {
-        height: 100%;
-        width: 100%;
-        display: table-cell;
-        vertical-align: middle;
-        padding-left: 15px;
+    .setting {
+      padding: 6px 15px;
 
-        > span {
-          font-size: 12px;
-          color: #777;
-        }
+      > span {
+        font-size: 12px;
+        color: #444;
+      }
 
-        .bootstrap-switch {
-          float: right !important;
-          margin-right: 15px;
+      > select, > input, .bootstrap-switch {
+        float: right !important;
+      }
 
-          &.bootstrap-switch-animate .bootstrap-switch-container {
-            transition: margin-left @page-transition;
-          }
-        }
+      .bootstrap-switch.bootstrap-switch-animate .bootstrap-switch-container {
+        transition: margin-left @page-transition;
       }
     }
 
@@ -258,12 +257,6 @@ body {
       z-index: 1;
       display: none;
     }
-  }
-
-  #splashscreen {
-    .absolute();
-    z-index: 1;
-    background-color: white;
   }
 
   .homectrl-switch(@menu-width-desktop);

@@ -184,9 +184,6 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
        * Final actions.
        */
 
-      // hide the splashscreen
-      $("#splashscreen").hide();
-
       // initialize navbar tooltips
       this.nodes.$header.find("[data-toggle='tooltip']").tooltip({
         delay: {

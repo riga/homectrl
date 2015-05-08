@@ -5,17 +5,6 @@ html
 
     link(rel="shortcut icon", href="#{staticRoot}public/favicon.ico")
 
-    if useCdn
-      link(rel="stylesheet",
-           href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css")
-      link(rel="stylesheet",
-           href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.1.0/css/bootstrap3/bootstrap-switch.min.css")
-    else
-      link(rel="stylesheet", href="#{staticRoot}vendor/bootstrap-3.2.0/css/bootstrap.min.css")
-      link(rel="stylesheet", href="#{staticRoot}vendor/bootstrap.switch-3.3.2/css/bootstrap.switch.min.css")
-
-    link(rel="stylesheet", href="#{staticRoot}css/styles.css")
-
     //- iOS web app settings
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     meta(name="apple-mobile-web-app-capable", content="yes")
@@ -29,16 +18,25 @@ html
     meta(name="mobile-web-app-capable", content="yes")
     link(rel="manifest" href="#{staticRoot}public/manifest.json")
 
+    style.
+      body > div#splashscreen {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background-color: white;
+        z-index: 100;
+        visibility: visible;
+        opacity: 1;
+        transition: visibility 0s linear 0.05s, opacity 0.05s linear;
+      }
+
   body
+
+    div#splashscreen
 
     div#homectrl
 
       nav#menu(role="navigation")
-        div#menu-type-switch
-          div
-            span Always show menu
-            input(type="checkbox")
-
 
         ul.nav.nav-pills.nav-stacked(role="menu")
           li.dropdown-header Plugins
@@ -47,11 +45,17 @@ html
 
           li.divider#menu-item-hook
 
-          li.dropdown-header Info
-          li.info#About
-            a(href="#About")
-              i.glyphicon.glyphicon-info-sign
-              |  About
+          li.dropdown-header Settings
+
+          li.setting#menu-type-switch
+            span Always show menu
+            input(type="checkbox")
+
+          li.setting
+            span Language
+            select
+              option English
+              option Deutsch
 
       div#page
         div#header
@@ -83,8 +87,6 @@ html
           //- Plugins go here
 
         div#blocker
-
-      div#splashscreen
 
     script.
       window.hcData = {
