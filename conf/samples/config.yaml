@@ -39,7 +39,7 @@ agenda:
     address: localhost:27017/homectrl-agenda
     collection: agendaJobs
   name: homectrl queue
-  processEvery: 30 seconds
+  processEvery: 5 seconds
   maxConcurreny: 20
   defaultConcurrency: 5
   defaultLockLifetime: 120000
