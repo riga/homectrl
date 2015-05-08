@@ -3,7 +3,7 @@
  */
 
 @blue: #428bca;
-@header-height: 40px;
+@header-height: 42px;
 @menu-width-desktop: 250px;
 @menu-width-mobile: 80%;
 @menu-width-breakpoint: 768px;
@@ -108,6 +108,7 @@ body {
     overflow-y: auto;
     background-image: url(../img/grey.png);
     background-position: center top;
+    transition: width @page-transition;
 
     #menu-type-switch {
       .absolute2(@height: @header-height);
@@ -130,7 +131,6 @@ body {
           margin-right: 15px;
 
           &.bootstrap-switch-animate .bootstrap-switch-container {
-            -webkit-transition: margin-left @page-transition;
             transition: margin-left @page-transition;
           }
         }
@@ -164,8 +164,7 @@ body {
 
 
     #header {
-      .absolute2();
-      height: @header-height;
+      .absolute2(@height: @header-height);
       z-index: 1;
       color: white;
       background-color: @blue;
