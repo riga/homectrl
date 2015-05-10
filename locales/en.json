@@ -1,0 +1,22 @@
+{
+	"menu": {
+		"plugins": "Plugins",
+		"settings": "Settings"
+	},
+
+	"settings": {
+		"menuType": "Always show menu"
+	},
+
+	"tooltips": {
+		"menu": "Menu",
+		"refresh": "Refresh",
+		"logout": "Logout",
+		"shutdown": "Shutdown"
+	},
+
+	"messages": {
+		"logout": "Do you really want to logout?",
+		"shutdown": "Do you really want to shutdown?"
+	}
+}

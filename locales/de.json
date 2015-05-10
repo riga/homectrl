@@ -1,0 +1,22 @@
+{
+	"menu": {
+		"plugins": "Plugins",
+		"settings": "Einstellungen"
+	},
+
+	"settings": {
+		"menuType": "Menu immer zeigen"
+	},
+
+	"tooltips": {
+		"menu": "Menu",
+		"refresh": "Aktualisieren",
+		"logout": "Logout",
+		"shutdown": "Herunterfahren"
+	},
+
+	"messages": {
+		"logout": "Wirklich ausloggen?",
+		"shutdown": "Wirklich herunterfahren?"
+	}
+}

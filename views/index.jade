@@ -3,7 +3,7 @@ html
   head
     title homectrl
 
-    link(rel="shortcut icon", href="#{staticRoot}public/favicon.ico")
+    link(rel="shortcut icon", href="#{hcData.staticRoot}public/favicon.ico")
 
     //- iOS web app settings
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
@@ -12,11 +12,11 @@ html
     meta(name="apple-mobile-web-app-status-bar-style", content="black")
     meta(name="format-detection", content="telephone=no")
     each size in [192, 180, 152, 144, 120, 114, 76, 72, 57]
-      link(rel="apple-touch-icon-precomposed", sizes="#{size}x#{size}", href="#{staticRoot}public/icon_#{size}.png")
+      link(rel="apple-touch-icon-precomposed", sizes="#{size}x#{size}", href="#{hcData.staticRoot}public/icon_#{size}.png")
 
     //- Android web app settings
     meta(name="mobile-web-app-capable", content="yes")
-    link(rel="manifest" href="#{staticRoot}public/manifest.json")
+    link(rel="manifest" href="#{hcData.staticRoot}public/manifest.json")
 
     style.
       body > div#splashscreen {
@@ -39,68 +39,55 @@ html
       nav#menu(role="navigation")
 
         ul.nav.nav-pills.nav-stacked(role="menu")
-          li.dropdown-header Plugins
+          li.dropdown-header #{locales.menu.plugins}
 
           //- Plugin entries go here
 
           li.divider#menu-item-hook
 
-          li.dropdown-header Settings
+          li.dropdown-header #{locales.menu.settings}
 
           li.setting#menu-type-switch
-            span Always show menu
+            span #{locales.settings.menuType}
             input(type="checkbox")
-
-          li.setting
-            span Language
-            select
-              option English
-              option Deutsch
 
       div#page
         div#header
           div
             div.text-left
               div.btn-group(role="group")
-                button.btn.btn-default#menu-toggle(role="button", title="Menu", data-toggle="tooltip")
+                button.btn.btn-default#menu-toggle(role="button", title="#{locales.tooltips.menu}", data-toggle="tooltip")
                   i.glyphicon.glyphicon-align-justify
-                button.btn.btn-default#reload(role="button", title="Refresh", data-toggle="tooltip")
+                button.btn.btn-default#refresh(role="button", title="#{locales.tooltips.refresh}", data-toggle="tooltip")
                   i.glyphicon.glyphicon-refresh
 
           div
             div#title-hook
-              span#About
+              span#Dummy
                 i.glyphicon.glyphicon-info-sign
-                |  About
+                |  Dummy
 
           div
             div.text-right
               div.btn-group(role="group")
-                button.btn.btn-default#logout(role="button", title="Logout", data-toggle="tooltip")
+                button.btn.btn-default#logout(role="button", title="#{locales.tooltips.logout}", data-toggle="tooltip")
                   i.glyphicon.glyphicon-log-out
-                button.btn.btn-default#shutdown(role="button", title="Shutdown", data-toggle="tooltip")
+                button.btn.btn-default#shutdown(role="button", title="#{locales.tooltips.shutdown}", data-toggle="tooltip")
                   i.glyphicon.glyphicon-off
 
         div#content
-          div.info#About About
+          div.info#Dummy Dummy
 
           //- Plugins go here
 
         div#blocker
 
     script.
-      window.hcData = {
-        dynamicRoot: "#{dynamicRoot}",
-        staticRoot : "#{staticRoot}",
-        plugins    : "#{plugins}" ? "#{plugins}".split(",") : [],
-        useCdn     : #{useCdn},
-        wsPort     : #{wsPort},
-        logging    : #{logging},
-        sessionId  : "#{sessionId}"
-      };
+      window.hcData    = !{hcDataString};
+      window.hcLocales = !{localesString};
 
-    if useCdn
+    if hcData.useCdn
       script(src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js",
-             data-main="#{staticRoot}js/main")
+             data-main="#{hcData.staticRoot}js/main")
     else
-      script(src="#{staticRoot}vendor/require-2.1.15.min.js", data-main="#{staticRoot}js/main")
+      script(src="#{hcData.staticRoot}vendor/require-2.1.15.min.js", data-main="#{hcData.staticRoot}js/main")

@@ -30,12 +30,16 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
        * Instance members.
        */
 
-      // dynamic and static root
-      this.dynamicRoot = window.hcData.dynamicRoot;
-      this.staticRoot  = window.hcData.staticRoot;
+      // store all entries from hcData
+      for (var key in window.hcData) {
+        this[key] = window.hcData[key];
+      }
+
+      // store locales
+      this.locales = window.hcLocales;
 
       // a logger
-      if (!window.hcData.logging) {
+      if (!this.logging) {
         $.Logger().disable();
       }
       this.logger = $.Logger("homectrl");
@@ -51,9 +55,6 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
 
       // state variables
       this.currentViewName = null;
-
-      // store plugin names
-      this.pluginNames = window.hcData.plugins;
 
 
       /**
@@ -107,7 +108,8 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
       this.nodes.$menuItemHook   = this.nodes.$menu.find("#menu-item-hook").first();
       this.nodes.$menuToggle     = this.nodes.$main.find("#page > #header #menu-toggle").first();
       this.nodes.$menuTypeSwitch = this.nodes.$main.find("#menu-type-switch input").first();
-      this.nodes.$reload         = this.nodes.$main.find("#page > #header #reload").first();
+      this.nodes.$languageSelect = this.nodes.$main.find("#language-select").first();
+      this.nodes.$refresh        = this.nodes.$main.find("#page > #header #refresh").first();
       this.nodes.$logout         = this.nodes.$main.find("#page > #header #logout").first();
       this.nodes.$shutdown       = this.nodes.$main.find("#page > #header #shutdown").first();
       this.nodes.$content        = this.nodes.$main.find("#page > #content").first();
@@ -144,26 +146,26 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
         this.blur();
       });
 
-      // reload button
-      this.nodes.$reload.click(function(event) {
+      // refresh button
+      this.nodes.$refresh.click(function(event) {
         window.location.reload();
       });
 
       // logout button
       this.nodes.$logout.click(function(event) {
-        if (window.confirm("Do you really want to logout?")) {
+        if (window.confirm(self.locales.messages.logout)) {
           $.post(self.dynamicRoot + "logout");
         }
       });
 
       // shutdown button
       this.nodes.$shutdown.click(function(event) {
-        if (window.confirm("Do you really want to shutdown?")) {
+        if (window.confirm(self.locales.messages.shutdown)) {
           $.post(self.dynamicRoot + "shutdown");
         }
       });
 
-      // clicks in the blocker
+      // clicks on the blocker
       this.nodes.$blocker.click(function(event) {
         event.preventDefault();
         self.toggleMenu(false);
@@ -193,7 +195,6 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
         placement: "bottom"
       });
 
-
       this.logger.info("setup UI");
 
       // callback
@@ -218,8 +219,7 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
       }
 
       // build up the connection
-      var wsHost  = window.location.protocol + "//" + window.location.hostname + ":"
-                  + window.hcData.wsPort;
+      var wsHost  = window.location.protocol + "//" + window.location.hostname + ":" + this.wsPort;
       this.socket = io.connect(wsHost);
 
       this.logger.info("setup websocket at '%s'", wsHost);
@@ -325,8 +325,8 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
 
 
     /**
-     * Shows a specific view. This might be an internal page, such as the #about page,
-     * or a plugin. This does not change the hash.
+     * Shows a specific view. This might be an internal page or a plugin. This does not change the
+     * hash.
      *
      * @param {string} viewName - The name of the view.
      * @returns {this}
@@ -535,7 +535,7 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
       this.name = name;
 
       // dynamic and static root
-      this.dynamicRoot = window.hcData.dynamicRoot + "plugins/" + name + "/";
+      this.dynamicRoot = hc.dynamicRoot + "plugins/" + name + "/";
       this.staticRoot  = this.dynamicRoot + "static/";
 
       // a logger
