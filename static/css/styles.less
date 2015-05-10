@@ -92,7 +92,7 @@ html {
 }
 
 body {
-  background-color: @blue;
+  background-color: @blue !important;
 
   #splashscreen {
     visibility: hidden !important;
@@ -219,6 +219,10 @@ body {
       #title-hook > span {
         display: none;
         font-size: 18px;
+      }
+
+      .tooltip > .tooltip-inner {
+        white-space: nowrap;
       }
     }
 
