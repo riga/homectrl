@@ -1,4 +1,9 @@
 {
+	"common": {
+		"on": "An",
+		"off": "Aus"
+	},
+
 	"menu": {
 		"plugins": "Plugins",
 		"settings": "Einstellungen"

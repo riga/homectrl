@@ -47,9 +47,7 @@ agenda:
 client:
   useCdn: false
   logging: true
-  availableLanguages:
-    - en
-    - de
+  availableLanguages: ["en", "de"]
   language: en
 
 logging:

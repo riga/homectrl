@@ -124,6 +124,8 @@ define(["emitter", "jquery", "io", "async"], function(Emitter, $, io, async) {
       // setup the menu type switch
       this.nodes.$menuTypeSwitch.bootstrapSwitch({
         size: "mini",
+        onText: this.locales.common.on,
+        offText: this.locales.common.off,
         onSwitchChange: function(_, state) {
           self.toggleMenuType(state);
         }
