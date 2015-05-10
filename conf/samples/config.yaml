@@ -48,7 +48,7 @@ client:
   useCdn: false
   logging: true
   availableLanguages: ["en", "de"]
-  language: en
+  language: auto
 
 logging:
   levels:
